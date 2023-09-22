@@ -54,6 +54,12 @@ async function fixOneZReading(business, registerId, nextZCount, nextOldNet, next
     if (!originalZreading) {
         return null;
     }
+    if (originalZreading.oldNet === nextOldNet && originalZreading.oldGross === nextOldGross) {
+        return {
+            newNet: originalZreading.newNet,
+            newGross: originalZreading.newGross,
+        };
+    }
     await BackUpModel.insertMany([originalZreading]);
     const nextNewNet = originalZreading.newNet + (nextOldNet - originalZreading.oldNet);
     const nextNewGross = originalZreading.newGross + (nextOldGross - originalZreading.oldGross);
