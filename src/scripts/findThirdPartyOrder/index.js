@@ -15,15 +15,15 @@ const merchantIds = [
     // test
     '1-CYLBT7CVJUVHDE-1',
 ];
-const field1 = 'fare.totalDiscountAmountDisplay';
-const field2 = 'fare.promotionDisplay';
+const field1 = 'totalDiscountAmountDisplay';
+const field2 = 'promotionDisplay';
 
 function handleOrder(order) {
     if (!order) {
         return false;
     }
     const rawData = JSON.parse(order.content.portalOrder || '""');
-    if (rawData && rawData[field1] !== '' && rawData[field2] !== '') {
+    if (rawData && rawData.fare && rawData.fare[field1] !== '' && rawData.fare[field2] !== '') {
         console.log(order.orderId);
         return true;
     } else {
