@@ -1,4 +1,4 @@
-import InventoryModel from '../models/inventory.js';
+import InventoryModel from '../../models/inventory.js';
 
 export async function run() {
     const count = await InventoryModel.count({});
