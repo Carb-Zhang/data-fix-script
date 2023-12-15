@@ -40,6 +40,7 @@ export async function run() {
             isEventIdsCleared: false,
             status: 'SUCCESS',
         })
+        .sort({ _id: -1 })
         .cursor({})
         .addCursorFlag('noCursorTimeout', true)
         .eachAsync(clearEventIds, { continueOnError: true });
