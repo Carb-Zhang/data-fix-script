@@ -40,7 +40,8 @@ async function fixEmployeeAccesses(employee) {
 }
 
 export async function run() {
-    await EmployeeModel.find()
+    const filter = { isDeleted: { $ne: true } };
+    await EmployeeModel.find(filter)
         .cursor({})
         .addCursorFlag('noCursorTimeout', true)
         .eachAsync(fixEmployeeAccesses, { continueOnError: true });
