@@ -1,0 +1,46 @@
+[
+    {
+        "_id": { "$oid": "658a6a49c750704c466577ad" },
+        "rules": [],
+        "eventStartAt": { "$date": { "$numberLong": "1703569993024" } },
+        "needDedupMsg": true,
+        "createInvIfNotExist": true,
+        "updateRule": "ALLOW_NEGATIVE",
+        "updates": [
+            {
+                "_id": { "$oid": "658a6a49c75070b2946577ae" },
+                "productId": "5f83d5b9a732e600060194a1",
+                "updateType": "INC",
+                "updateAmount": { "$numberInt": "1" },
+                "amountAfter": { "$numberInt": "0" },
+                "amountBefore": { "$numberInt": "-1" },
+                "status": "SUCCESS",
+                "updatedAt": { "$date": { "$numberLong": "1703570005088" } }
+            },
+            {
+                "_id": { "$oid": "658a6a49c750704e436577af" },
+                "productId": "5f83d5bca732e600060194e7",
+                "updateType": "INC",
+                "updateAmount": { "$numberInt": "4" },
+                "amountAfter": { "$numberInt": "0" },
+                "amountBefore": { "$numberInt": "-4" },
+                "status": "SUCCESS",
+                "updatedAt": { "$date": { "$numberLong": "1703570005597" } }
+            }
+        ],
+        "eventId": "334eaa75-1974-401f-a3a4-21e666e2765f",
+        "eventType": "STOCK_TAKE",
+        "business": "mangalatheebam",
+        "storeId": "5e1ecb78f611ea7770be1287",
+        "sourceInfo": { "refId": "658a6a18c8e4cf00072ee1c9" },
+        "status": "UPDATE_FAIL",
+        "retryCount": { "$numberInt": "3" },
+        "isEventIdsCleared": true,
+        "isNeedManualCheck": false,
+        "createdAt": { "$date": { "$numberLong": "1703569997543" } },
+        "updatedAt": { "$date": { "$numberLong": "1703576679591" } },
+        "__v": { "$numberInt": "0" },
+        "succeededAt": { "$date": { "$numberLong": "1703575452422" } },
+        "failedAt": { "$date": { "$numberLong": "1703575453758" } }
+    }
+]
