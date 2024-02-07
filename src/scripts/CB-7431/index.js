@@ -24,7 +24,7 @@ const receiptNumbers = [
 // const receiptNumbers = ['00000000153'];
 
 async function fixOneOrder(order) {
-    console.log(order.receiptNumber);
+    console.log(order.receiptNumber, order._id.toString());
     order.items.forEach((item) => {
         if (item.productId && item.productId.toString() === oldProductId) {
             console.log(item);
