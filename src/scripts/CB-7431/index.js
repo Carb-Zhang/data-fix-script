@@ -19,6 +19,7 @@ const receiptNumbers = [
 
 async function fixOneOrder(order) {
     order.items.forEach((item) => {
+        console.log(item.productId);
         if (item.productId === oldProductId) {
             console.log(item);
         }
