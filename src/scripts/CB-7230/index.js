@@ -2,7 +2,7 @@ import InventoryChangeEvent from '../../models/inventoryChangeEvent.js';
 import { createWriteStream } from 'fs';
 import { sleep } from '../../utils/tools.js';
 
-const writeStream = createWriteStream('fail_inventory_change_event.json');
+const writeStream = createWriteStream('fail_inventory_change_event_without_beep.json');
 
 function writeOneDoc(str) {
     return new Promise((res, rej) => {
@@ -20,6 +20,7 @@ function writeOneDoc(str) {
 export async function run() {
     const filter = {
         status: { $ne: 'SUCCESS' },
+        eventType: { $ne: 'ORDER_ONLINE_BEEP_PAY_FIRST_PLACE' },
         'updates.0': { $exists: true },
         isNeedManualCheck: true,
     };
