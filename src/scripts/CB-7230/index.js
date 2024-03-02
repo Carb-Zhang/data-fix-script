@@ -18,11 +18,12 @@ function writeOneDoc(str) {
 }
 
 export async function run() {
-    const filter = { status: { $ne: 'SUCCESS' } };
+    const filter = { status: { $ne: 'SUCCESS' }, 'updates.0': { $exists: true } };
 
     let isFirst = true;
     await InventoryChangeEvent.default
         .find(filter)
+        .sort({ createdAt: 1 })
         .select({ updates: 0 })
         .lean()
         .cursor()
