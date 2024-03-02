@@ -18,7 +18,11 @@ function writeOneDoc(str) {
 }
 
 export async function run() {
-    const filter = { status: { $ne: 'SUCCESS' }, 'updates.0': { $exists: true } };
+    const filter = {
+        status: { $ne: 'SUCCESS' },
+        'updates.0': { $exists: true },
+        isNeedManualCheck: true,
+    };
 
     let isFirst = true;
     await InventoryChangeEvent.default
