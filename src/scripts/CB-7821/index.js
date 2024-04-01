@@ -36,7 +36,7 @@ async function getRecentChangedInvs() {
             });
         });
     });
-    return invs.length > 50 ? invs.slice(0, 9) : invs;
+    return invs.length > 50 ? invs.slice(0, 100) : invs;
 }
 
 async function getInventoryChanges(params) {
