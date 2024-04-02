@@ -141,6 +141,7 @@ function checking(auditTrails, currentQty) {
     while (++i < auditTrails.length) {
         lastRecord = auditTrails[i];
         if (currentRecord.quantityBefore !== lastRecord.quantityAfter) {
+            console.log(`not consistent record ${JSON.stringify(currentRecord)}`);
             return [false, true];
         }
         currentRecord = lastRecord;
@@ -150,7 +151,6 @@ function checking(auditTrails, currentQty) {
 
 async function verifyInv(inv) {
     const { storeId, productId } = inv;
-    console.log(`Start verify ${storeId} ${productId}`);
 
     const res = await InventoryCollection.find(inv);
     if (!res[0]) {
