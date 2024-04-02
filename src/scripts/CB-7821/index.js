@@ -36,7 +36,7 @@ async function getRecentChangedInvs() {
             });
         });
     });
-    return invs.length > 50 ? invs.slice(0, 100) : invs;
+    return invs.length > 200 ? invs.slice(0, 200) : invs;
 }
 
 async function getInventoryChanges(params) {
@@ -127,7 +127,15 @@ async function getInventoryChanges(params) {
             },
         },
     ]);
-    return _.reverse(_.sortBy([...setChanges, ...incChanges], ['changedAt']));
+    return _.reverse(_.sortBy([...setChanges, ...incChanges], ['changedAt'])).map(
+        (record) =>
+            new Object({
+                ...record,
+                quantityBefore: _.round(record.quantityBefore, 2),
+                quantityAfter: _.round(record.quantityAfter, 2),
+                quantityDiff: _.round(record.quantityDiff, 2),
+            }),
+    );
 }
 
 function checking(auditTrails, currentQty) {
@@ -159,7 +167,7 @@ async function verifyInv(inv) {
     const auditTrails = await getInventoryChanges({
         storeId,
         productId,
-        startAt: new Date(Date.now() - oneDayInMS * 30),
+        startAt: new Date(Date.now() - oneDayInMS * 10),
         endAt: new Date(Date.now() + oneDayInMS),
     });
     const [isQtyOnHandNotConsistent, isAuditTrailNotConsistent] = checking(
