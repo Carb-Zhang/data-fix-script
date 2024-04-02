@@ -134,17 +134,18 @@ function checking(auditTrails, currentQty) {
     let i = 0;
     let currentRecord = auditTrails[i];
     if (currentRecord.quantityAfter !== currentQty) {
-        console.log(`currentQty not consistent`);
+        return [true, false];
     }
     let lastRecord = null;
 
     while (++i < auditTrails.length) {
         lastRecord = auditTrails[i];
         if (currentRecord.quantityBefore !== lastRecord.quantityAfter) {
-            console.log(`audit trail not consistent, ${JSON.stringify(currentRecord)}`);
+            return [false, true];
         }
         currentRecord = lastRecord;
     }
+    return [false, false];
 }
 
 async function verifyInv(inv) {
@@ -161,7 +162,17 @@ async function verifyInv(inv) {
         startAt: new Date(Date.now() - oneDayInMS * 30),
         endAt: new Date(Date.now() + oneDayInMS),
     });
-    checking(auditTrails, res[0].quantityOnHand);
+    const [isQtyOnHandNotConsistent, isAuditTrailNotConsistent] = checking(
+        auditTrails,
+        res[0].quantityOnHand,
+    );
+    if (isQtyOnHandNotConsistent) {
+        console.log(`${JSON.stringify({ storeId, productId })}, currentQty not consistent`);
+    }
+    if (isAuditTrailNotConsistent) {
+        console.log(`${JSON.stringify({ storeId, productId })}, audit trail not consistent`);
+        console.log(`${JSON.stringify(auditTrails)}`);
+    }
 }
 
 export async function run() {
