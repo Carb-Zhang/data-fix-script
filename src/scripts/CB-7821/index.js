@@ -8,7 +8,7 @@ import {
 import _ from 'lodash';
 
 const oneDayInMS = 24 * 3600 * 1000;
-const invCount = 200;
+const invCount = 1000;
 
 async function getRecentChangedInvs() {
     const businesses = await InventoryChangeEventCollection.default.distinct('business', {
