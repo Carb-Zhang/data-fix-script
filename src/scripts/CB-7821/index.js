@@ -140,7 +140,7 @@ async function getInventoryChanges(params) {
 }
 
 function isEqual(v1, v2) {
-    return Math.abs(v1 - v2) < 0.001;
+    return Math.abs(v1 - v2) < 0.01;
 }
 
 function checking(storeId, productId, auditTrails, currentQty) {
