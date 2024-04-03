@@ -8,6 +8,7 @@ import {
 import _ from 'lodash';
 
 const oneDayInMS = 24 * 3600 * 1000;
+const invCount = 200;
 
 async function getRecentChangedInvs() {
     const businesses = await InventoryChangeEventCollection.default.distinct('business', {
@@ -36,7 +37,7 @@ async function getRecentChangedInvs() {
             });
         });
     });
-    return invs.length > 200 ? invs.slice(0, 200) : invs;
+    return invs.length > invCount ? invs.slice(0, invCount) : invs;
 }
 
 async function getInventoryChanges(params) {
@@ -138,23 +139,30 @@ async function getInventoryChanges(params) {
     );
 }
 
+function isEqual(v1, v2) {
+    return Math.abs(v1 - v2) < 0.001;
+}
+
 function checking(auditTrails, currentQty) {
     let i = 0;
     let currentRecord = auditTrails[i];
-    if (currentRecord.quantityAfter !== currentQty) {
-        return [true, false];
+    let isQtyOnHandNotConsistent = false;
+    let isAuditTrailNotConsistent = false;
+    if (!isEqual(currentRecord.quantityAfter, currentQty)) {
+        isQtyOnHandNotConsistent = true;
     }
     let lastRecord = null;
 
     while (++i < auditTrails.length) {
         lastRecord = auditTrails[i];
-        if (currentRecord.quantityBefore !== lastRecord.quantityAfter) {
+        if (!isEqual(currentRecord.quantityBefore, lastRecord.quantityAfter)) {
             console.log(`not consistent record ${JSON.stringify(currentRecord)}`);
-            return [false, true];
+            isAuditTrailNotConsistent = true;
+            break;
         }
         currentRecord = lastRecord;
     }
-    return [false, false];
+    return [isQtyOnHandNotConsistent, isAuditTrailNotConsistent];
 }
 
 async function verifyInv(inv) {
