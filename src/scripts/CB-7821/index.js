@@ -143,26 +143,34 @@ function isEqual(v1, v2) {
     return Math.abs(v1 - v2) < 0.001;
 }
 
-function checking(auditTrails, currentQty) {
+function checking(storeId, productId, auditTrails, currentQty) {
     let i = 0;
     let currentRecord = auditTrails[i];
-    let isQtyOnHandNotConsistent = false;
-    let isAuditTrailNotConsistent = false;
     if (!isEqual(currentRecord.quantityAfter, currentQty)) {
-        isQtyOnHandNotConsistent = true;
+        console.log(
+            'currentQty not consistent',
+            storeId,
+            productId,
+            currentRecord.quantityAfter,
+            currentQty,
+        );
     }
     let lastRecord = null;
 
     while (++i < auditTrails.length) {
         lastRecord = auditTrails[i];
         if (!isEqual(currentRecord.quantityBefore, lastRecord.quantityAfter)) {
-            console.log(`not consistent record ${JSON.stringify(currentRecord)}`);
-            isAuditTrailNotConsistent = true;
+            console.log(
+                storeId,
+                productId,
+                `audit trail not consistent ${JSON.stringify(currentRecord)} ${JSON.stringify(
+                    lastRecord,
+                )}`,
+            );
             break;
         }
         currentRecord = lastRecord;
     }
-    return [isQtyOnHandNotConsistent, isAuditTrailNotConsistent];
 }
 
 async function verifyInv(inv) {
@@ -178,17 +186,7 @@ async function verifyInv(inv) {
         startAt: new Date(Date.now() - oneDayInMS * 10),
         endAt: new Date(Date.now() + oneDayInMS),
     });
-    const [isQtyOnHandNotConsistent, isAuditTrailNotConsistent] = checking(
-        auditTrails,
-        res[0].quantityOnHand,
-    );
-    if (isQtyOnHandNotConsistent) {
-        console.log(`${JSON.stringify({ storeId, productId })}, currentQty not consistent`);
-    }
-    if (isAuditTrailNotConsistent) {
-        console.log(`${JSON.stringify({ storeId, productId })}, audit trail not consistent`);
-        console.log(`${JSON.stringify(auditTrails)}`);
-    }
+    checking(storeId, productId, auditTrails, res[0].quantityOnHand);
 }
 
 export async function run() {
