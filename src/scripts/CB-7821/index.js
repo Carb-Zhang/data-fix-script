@@ -189,18 +189,25 @@ async function verifyInv(inv) {
     checking(storeId, productId, auditTrails, res[0].quantityOnHand);
 }
 
+// export async function run() {
+// const invs = await getRecentChangedInvs();
+// console.log(`Get ${invs.length} waiting verify invs`);
+// let i = -1;
+// while (++i < invs.length) {
+//     await verifyInv(invs[i]);
+// }
+// }
+
 export async function run() {
-    // const invs = await getRecentChangedInvs();
-    // console.log(`Get ${invs.length} waiting verify invs`);
-    // let i = -1;
-    // while (++i < invs.length) {
-    //     await verifyInv(invs[i]);
-    // }
+    const oneMinutes = 60 * 1000;
+    const time = new Date('2024-04-02T05:16:33.693Z');
+    const storeId = '63d1e946ddbd8a000933af31';
+    const productId = '65755427d05f440006f4e35c';
     const auditTrails = await getInventoryChanges({
-        storeId: '63d1e946ddbd8a000933af31',
-        productId: '63d502b6954bfd00084daa70',
-        startAt: new Date('2024-03-31T01:46:38.749Z'),
-        endAt: new Date('2024-03-31T03:46:38.749Z'),
+        storeId,
+        productId,
+        startAt: new Date(time.getTime() - oneMinutes),
+        endAt: new Date(time.getTime() + oneMinutes),
     });
     console.log(auditTrails);
 }
