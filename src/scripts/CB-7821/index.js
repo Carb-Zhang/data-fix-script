@@ -190,10 +190,17 @@ async function verifyInv(inv) {
 }
 
 export async function run() {
-    const invs = await getRecentChangedInvs();
-    console.log(`Get ${invs.length} waiting verify invs`);
-    let i = -1;
-    while (++i < invs.length) {
-        await verifyInv(invs[i]);
-    }
+    // const invs = await getRecentChangedInvs();
+    // console.log(`Get ${invs.length} waiting verify invs`);
+    // let i = -1;
+    // while (++i < invs.length) {
+    //     await verifyInv(invs[i]);
+    // }
+    const auditTrails = await getInventoryChanges({
+        storeId: '63d1e946ddbd8a000933af31',
+        productId: '63d502b6954bfd00084daa70',
+        startAt: new Date(Date.now() - oneDayInMS * 10),
+        endAt: new Date(Date.now() + oneDayInMS),
+    });
+    console.log(auditTrails);
 }
