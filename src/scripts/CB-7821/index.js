@@ -206,8 +206,8 @@ export async function run() {
     const auditTrails = await getInventoryChanges({
         storeId,
         productId,
-        startAt: new Date(time.getTime() - oneMinutes),
-        endAt: new Date(time.getTime() + oneMinutes),
+        startAt: new Date(time.getTime() - oneMinutes * 60),
+        endAt: new Date(time.getTime() + oneMinutes * 60),
     });
     console.log(auditTrails);
 }
