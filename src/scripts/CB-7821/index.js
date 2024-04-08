@@ -200,9 +200,9 @@ async function verifyInv(inv) {
 
 export async function run() {
     const oneMinutes = 60 * 1000;
-    const time = new Date('2024-04-03T13:35:19.985Z');
+    const time = new Date('2024-04-03T13:35:19.994Z');
     const storeId = '63972fc2e4f2ee000711e43f';
-    const productId = '6398bf9d2379330007d9c4ca';
+    const productId = '6398bf9e2379330007d9c56e';
     const auditTrails = await getInventoryChanges({
         storeId,
         productId,
