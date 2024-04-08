@@ -199,8 +199,8 @@ export async function run() {
     const auditTrails = await getInventoryChanges({
         storeId: '63d1e946ddbd8a000933af31',
         productId: '63d502b6954bfd00084daa70',
-        startAt: new Date(Date.now() - oneDayInMS * 10),
-        endAt: new Date(Date.now() + oneDayInMS),
+        startAt: new Date('2024-03-31T01:46:38.749Z'),
+        endAt: new Date('2024-03-31T03:46:38.749Z'),
     });
     console.log(auditTrails);
 }
