@@ -189,25 +189,25 @@ async function verifyInv(inv) {
     checking(storeId, productId, auditTrails, res[0].quantityOnHand);
 }
 
-// export async function run() {
-// const invs = await getRecentChangedInvs();
-// console.log(`Get ${invs.length} waiting verify invs`);
-// let i = -1;
-// while (++i < invs.length) {
-//     await verifyInv(invs[i]);
-// }
-// }
-
 export async function run() {
-    const oneMinutes = 60 * 1000;
-    const time = new Date('2024-04-01T13:44:18.086Z');
-    const storeId = '659e5e6ba78a5a00075b6071';
-    const productId = '65b30d459c3baf0007bc06f0';
-    const auditTrails = await getInventoryChanges({
-        storeId,
-        productId,
-        startAt: new Date(time.getTime() - oneDayInMS),
-        endAt: new Date(time.getTime() + oneMinutes * 60),
-    });
-    console.log(auditTrails);
+    const invs = await getRecentChangedInvs();
+    console.log(`Get ${invs.length} waiting verify invs`);
+    let i = -1;
+    while (++i < invs.length) {
+        await verifyInv(invs[i]);
+    }
 }
+
+// export async function run() {
+//     const oneMinutes = 60 * 1000;
+//     const time = new Date('2024-04-01T13:44:18.086Z');
+//     const storeId = '659e5e6ba78a5a00075b6071';
+//     const productId = '65b30d459c3baf0007bc06f0';
+//     const auditTrails = await getInventoryChanges({
+//         storeId,
+//         productId,
+//         startAt: new Date(time.getTime() - oneDayInMS),
+//         endAt: new Date(time.getTime() + oneMinutes * 60),
+//     });
+//     console.log(auditTrails);
+// }
