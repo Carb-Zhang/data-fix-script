@@ -7,7 +7,9 @@ function isEqual(v1, v2) {
 }
 
 function timeGapInSeconds(date1, date2) {
-    return DateTime.fromJSDate(date1).diff(DateTime.fromJSDate(date2), 'seconds').as('seconds');
+    return Math.abs(
+        DateTime.fromJSDate(date1).diff(DateTime.fromJSDate(date2), 'seconds').as('seconds'),
+    );
 }
 
 function getNextRecordGroup(records, startIndex) {

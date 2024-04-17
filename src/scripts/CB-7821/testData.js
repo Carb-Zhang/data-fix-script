@@ -4,7 +4,7 @@ export const testRecords = [
         quantityBefore: 1,
         quantityAfter: 0,
         quantityDiff: -1,
-        changedAt: new Date('2024-03-31T00:01:00.000Z'),
+        changedAt: new Date('2024-03-31T00:03:00.000Z'),
     },
     {
         eventType: 'ORDER_OFFLINE_PLACE',
@@ -32,6 +32,6 @@ export const testRecords = [
         quantityBefore: 5,
         quantityAfter: 4,
         quantityDiff: -1,
-        changedAt: new Date('2024-03-31T00:03:00.000Z'),
+        changedAt: new Date('2024-03-31T00:01:00.000Z'),
     },
 ];
