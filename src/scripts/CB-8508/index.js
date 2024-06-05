@@ -31,8 +31,7 @@ export async function run() {
     await OnlineTransaction.find({
         channel: { $in: [10, 11, 12] },
         createdTime: {
-            $gt: new Date('2024-06-05T14:30:33.000+08:00'),
-            $lt: new Date('2024-06-05T14:50:33.000+08:00'),
+            $gt: new Date('2024-06-05T01:30:33.000+08:00'),
         },
     })
         .sort({ _id: -1 })
