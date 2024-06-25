@@ -23,12 +23,13 @@ export async function run() {
         eventType: { $ne: 'ORDER_ONLINE_BEEP_PAY_FIRST_PLACE' },
         'updates.0': { $exists: true },
         isNeedManualCheck: true,
+        createdAt: { $gt: new Date('2024-04-25T10:36:23.940+08:00') },
     };
 
     let isFirst = true;
     await InventoryChangeEvent.default
         .find(filter)
-        .sort({ createdAt: 1 })
+        .sort({ createdAt: -1 })
         .select({ updates: 0 })
         .lean()
         .cursor()
