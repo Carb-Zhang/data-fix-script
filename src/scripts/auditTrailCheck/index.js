@@ -33,12 +33,13 @@ function writeOneEventDoc(str) {
     });
 }
 
-const BUSINESS = 'onlytestaccount';
+const BUSINESS = 'paporma';
+const START_TIME = new Date('2023-07-01T10:36:23.940+08:00');
 
 async function checkOrdersWithFailMessage() {
     const filter = {
         business: BUSINESS,
-        createdTime: { $gt: new Date('2024-04-25T10:36:23.940+08:00') },
+        createdTime: { $gt: START_TIME },
         'inventoryChangeMsgTrackInfo.isSendMsg': false,
     };
 
@@ -69,7 +70,7 @@ async function checkEvent() {
         eventType: { $ne: 'ORDER_ONLINE_BEEP_PAY_FIRST_PLACE' },
         'updates.0': { $exists: true },
         isNeedManualCheck: true,
-        createdAt: { $gt: new Date('2024-03-25T10:36:23.940+08:00') },
+        createdAt: { $gt: START_TIME },
     };
 
     let isFirst = true;
