@@ -21,7 +21,9 @@ async function getEventIds() {
     const orders = await TransactionRecord.find(filter)
         .select({ inventoryChangeMsgTrackInfo: 1 })
         .lean();
-    return orders.map(({ inventoryChangeMsgTrackInfo }) => inventoryChangeMsgTrackInfo.eventId);
+    return orders.map(
+        ({ inventoryChangeMsgTrackInfo }) => inventoryChangeMsgTrackInfo.eventId || '',
+    );
 }
 
 async function checkProduct(productId, storeId) {
@@ -66,12 +68,12 @@ function combineProducts(event) {
 export async function test() {
     const eventIds = await getEventIds();
     for (let i = 0; i < eventIds.length; i++) {
-        const event = await InventoryChangeEvent.default.findOne({ eventId: eventIds[i] });
+        const event = await InventoryChangeEvent.default.findOne({ eventId: eventIds[i] }).lean();
         if (!event) {
             continue;
         }
 
-        const products = combineProducts();
+        const products = combineProducts(event);
 
         for (let j = 0; j < products.length; j++) {
             await checkProduct(products[j].productId, products[j].storeId);
