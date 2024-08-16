@@ -17,7 +17,7 @@ function writeOneOrderDoc(str) {
     });
 }
 
-export async function checkOrdersWithFailMessage(business, startTime) {
+export async function checkOrdersWithFailMessage(business, startTime, endTime) {
     const filter = {
         'inventoryChangeMsgTrackInfo.isSendMsg': false,
     };
@@ -28,6 +28,10 @@ export async function checkOrdersWithFailMessage(business, startTime) {
 
     if (startTime) {
         Object.assign(filter, { createdTime: { $gt: startTime } });
+    }
+
+    if (endTime) {
+        Object.assign(filter, { createdTime: { $lt: endTime } });
     }
 
     let isFirst = true;
