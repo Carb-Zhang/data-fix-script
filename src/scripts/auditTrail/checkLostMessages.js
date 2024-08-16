@@ -1,6 +1,7 @@
 import TransactionRecord from '../../models/transactionRecord.js';
 import { createWriteStream } from 'fs';
 import { sleep } from '../../utils/tools.js';
+import { Types } from 'mongoose';
 
 const writeOrderStream = createWriteStream('orders_with_fail_inv_message.json');
 
@@ -20,6 +21,10 @@ function writeOneOrderDoc(str) {
 export async function checkOrdersWithFailMessage(business, startTime, endTime) {
     const filter = {
         'inventoryChangeMsgTrackInfo.isSendMsg': false,
+        _id: {
+            $gte: new Types.ObjectId('66bef16c2146ff00070ca9ff'),
+            $lte: new Types.ObjectId('66bef5d9679604000734ccfc'),
+        },
     };
 
     if (business) {
