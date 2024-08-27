@@ -22,8 +22,10 @@ export async function checkOrdersWithFailMessage(business, startTime, endTime) {
     const filter = {
         'inventoryChangeMsgTrackInfo.isSendMsg': false,
         _id: {
-            $gte: new Types.ObjectId('66bef16c2146ff00070ca9ff'),
-            $lte: new Types.ObjectId('66bef5d9679604000734ccfc'),
+            // $gte: new Types.ObjectId('66bef16c2146ff00070ca9ff'),
+            // $lte: new Types.ObjectId('66bef5d9679604000734ccfc'),
+            $gte: new Types.ObjectId.createFromTime(startTime),
+            $lte: new Types.ObjectId.createFromTime(endTime),
         },
     };
 
