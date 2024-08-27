@@ -147,6 +147,9 @@ async function fixSourceInfo(doc) {
                 sourceInfo: newSourceInfo,
             },
         },
+        {
+            timestamps: false,
+        },
     );
 }
 
