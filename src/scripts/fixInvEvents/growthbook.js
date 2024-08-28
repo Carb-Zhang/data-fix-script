@@ -24,6 +24,7 @@ const whitelist = [
     'tipsytownempire',
     'creativemart',
     'thecave',
+    'happyday_2019',
 ];
 
 export function isOn(business) {

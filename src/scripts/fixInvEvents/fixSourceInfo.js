@@ -169,6 +169,7 @@ export async function fixEventSourceInfo() {
     const filter = {
         eventType: { $in: EVENT_TYPES },
         createdAt: { $gt: START_AT, $lt: START_END },
+        business: 'happyday_2019',
     };
 
     await InventoryChangeEvent.default
