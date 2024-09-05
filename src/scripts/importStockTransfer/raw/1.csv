@@ -1,0 +1,5 @@
+Product Name,SKU,Product Id,Ordered Qty,Serial Numbers
+#Optional,Required if no Product Id,Required if no SKU (found in Manage Products > Export to CSV),Required for simple or composite products,Required for serialized products only; Must be unique if specified; Use semicolon(;) to separate multiple serial numbers.
+Sample product,,65b8d64feacf940006dfb609,10,
+Sample product,,652f534180460ea013df0b88,,cdcdcv;dvdvdvdvdvdc;cdcdcv;123
+Sample product,,66d6896e180527a9e3c5ebf6,,4444;dvdvdvdvdvdc;cdcdcv;123
