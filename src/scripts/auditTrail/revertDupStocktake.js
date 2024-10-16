@@ -28,7 +28,6 @@ function checkEqual(events) {
                     _.pick(firstUpdates[j], ['productId', 'updateAmount']),
                     _.pick(updatesToCompare[j], ['productId', 'updateAmount']),
                 );
-                break;
             }
         }
     }
