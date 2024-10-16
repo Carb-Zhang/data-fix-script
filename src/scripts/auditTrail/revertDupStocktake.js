@@ -4,6 +4,21 @@ import { createWriteStream } from 'fs';
 import { sleep } from '../../utils/tools.js';
 import _ from 'lodash';
 
+const writeEventStream = createWriteStream('removed_event.json');
+
+function writeOneEventDoc(str) {
+    return new Promise((res, rej) => {
+        writeEventStream.write(str, (err) => {
+            if (err) {
+                console.log('err', err);
+                rej(err);
+            } else {
+                res();
+            }
+        });
+    });
+}
+
 const stocktakeId = '6704bb142a3f11000853f32b';
 const business = 'protechkitzone';
 const storeId = '5e99435520e8461c64dff687';
@@ -48,6 +63,22 @@ export async function fix(updates, times) {
     }
 }
 
+export async function backup(events) {
+    let isFirst = true;
+
+    for (let i = 1; i < events.length; i++) {
+        await InventoryChangeEvent.default.deleteOne({ _id: events[i]._id });
+
+        var prefix = isFirst ? '[' : ',';
+        if (isFirst) {
+            isFirst = false;
+        }
+        let docToReturn = prefix + JSON.stringify(events[i]);
+        await writeOneEventDoc(docToReturn);
+    }
+    await writeOneEventDoc(']');
+}
+
 export async function revertDupStocktake() {
     const filter = {
         'sourceInfo.refId': '6704bb142a3f11000853f32b',
@@ -59,7 +90,8 @@ export async function revertDupStocktake() {
         .select({ updates: 1 })
         .lean();
 
-    checkEqual(events);
-    const firstEvent = events[0];
-    await fix(firstEvent.updates, events.length - 1);
+    // checkEqual(events);
+    // const firstEvent = events[0];
+    // await fix(firstEvent.updates, events.length - 1);
+    await backup(events);
 }
