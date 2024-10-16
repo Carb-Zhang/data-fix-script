@@ -1,4 +1,5 @@
 import InventoryChangeEvent from '../../models/inventoryChangeEvent.js';
+import InventoryModel from '../../models/inventory.js';
 import { createWriteStream } from 'fs';
 import { sleep } from '../../utils/tools.js';
 import _ from 'lodash';
@@ -33,6 +34,20 @@ function checkEqual(events) {
     }
 }
 
+export async function fix(updates, times) {
+    for (let i = 0; i < updates.length; i++) {
+        try {
+            const { productId, updateAmount } = updates[i];
+            await InventoryModel.updateOne(
+                { storeId, productId },
+                { $inc: { quantityOnHand: -(updateAmount * times) } },
+            );
+        } catch (err) {
+            console.log(err, updates[i]);
+        }
+    }
+}
+
 export async function revertDupStocktake() {
     const filter = {
         'sourceInfo.refId': '6704bb142a3f11000853f32b',
@@ -45,4 +60,6 @@ export async function revertDupStocktake() {
         .lean();
 
     checkEqual(events);
+    const firstEvent = events[0];
+    await fix(firstEvent.updates, events.length - 1);
 }
