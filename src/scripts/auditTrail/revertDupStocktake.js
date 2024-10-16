@@ -23,7 +23,7 @@ function checkEqual(events) {
                     _.pick(updatesToCompare[j], ['productId', 'updateAmount']),
                 )
             ) {
-                console.log('*********not equal', i, j);
+                console.log('*********not equal', firstUpdates[j], updatesToCompare[j]);
                 break;
             }
         }
