@@ -9,6 +9,7 @@ export async function run() {
         business: 'protechkitzone',
         'stockTakes.stockTakeId': '6704bb142a3f11000853f32b',
     }).select({ 'stockTakes.$': 1, cost: 1 });
+    let firstPrint = true;
 
     products.forEach(function (product) {
         var quantityDiff =
@@ -16,6 +17,10 @@ export async function run() {
         var costDiff = quantityDiff * (product.cost || 0);
         totalQtyDiff += quantityDiff;
         totalCostDiff += costDiff;
+        if (_.isNaN(totalCostDiff) && firstPrint) {
+            firstPrint = false;
+            console.log(product);
+        }
     });
 
     console.log(totalQtyDiff, totalCostDiff);
