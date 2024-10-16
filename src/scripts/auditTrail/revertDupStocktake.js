@@ -18,7 +18,7 @@ function checkEqual(events) {
         }
         for (let j = 0; j < firstUpdates.length; j++) {
             if (
-                _.isEqual(
+                !_.isEqual(
                     _.pick(firstUpdates[j], ['productId', 'updateAmount']),
                     _.pick(updatesToCompare[j], ['productId', 'updateAmount']),
                 )
