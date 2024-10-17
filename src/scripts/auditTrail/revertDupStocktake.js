@@ -79,19 +79,27 @@ export async function backup(events) {
     await writeOneEventDoc(']');
 }
 
-export async function revertDupStocktake() {
-    const filter = {
-        'sourceInfo.refId': '6704bb142a3f11000853f32b',
-    };
+async function fixInv() {
+    await InventoryModel.updateOne(
+        { storeId, productId: '6336e203c7474a0007329e9b' },
+        { $inc: { quantityOnHand: -4 } },
+    );
+}
 
-    const events = await InventoryChangeEvent.default
-        .find(filter)
-        .sort({ createdAt: 1 })
-        .select({ updates: 1 })
-        .lean();
+export async function revertDupStocktake() {
+    // const filter = {
+    //     'sourceInfo.refId': '6704bb142a3f11000853f32b',
+    // };
+
+    // const events = await InventoryChangeEvent.default
+    //     .find(filter)
+    //     .sort({ createdAt: 1 })
+    //     .select({ updates: 1 })
+    //     .lean();
 
     // checkEqual(events);
     // const firstEvent = events[0];
     // await fix(firstEvent.updates, events.length - 1);
-    await backup(events);
+    // await backup(events);
+    await fixInv()
 }
