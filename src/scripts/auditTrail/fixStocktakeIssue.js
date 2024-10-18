@@ -21,8 +21,10 @@ async function compareStocktakes() {
 }
 
 async function fixInv(updates) {
+    let count = 0;
     for (let i = 0; i < updates.length; i++) {
         try {
+            count++;
             const { productId, updateAmount } = updates[i];
             await InventoryModel.updateOne(
                 { storeId, productId },
@@ -32,6 +34,7 @@ async function fixInv(updates) {
             console.log(err, updates[i]);
         }
     }
+    console.log('fix Inv count', count);
 }
 
 async function fixStocktakeItems() {
