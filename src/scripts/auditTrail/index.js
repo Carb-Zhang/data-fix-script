@@ -13,6 +13,7 @@ export async function run() {
     // await checkOrdersWithFailMessage('', START_TIME, END_TIME);
     // await checkEvent('', START_TIME);
     // await checkEvent('', START_TIME);
-    await fixStocktakeIssue();
+    // await fixStocktakeIssue();
+    await fixProductCost();
     // await test();
 }
