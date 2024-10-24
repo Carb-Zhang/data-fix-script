@@ -35,7 +35,7 @@ async function locateRegister(business, registerId) {
         business,
         registerId: new ObjectId(registerId),
         transactionType: { $nin: ['Return', 'PreOrder'] },
-        isCancel: { $ne: true },
+        isCancelled: { $ne: true },
         modifiedTime: { $gt: new Date('2024-09-19T12:00:00.000+08:00') },
         $expr: { $ne: ['$modifiedTime', '$createdTime'] },
     };
