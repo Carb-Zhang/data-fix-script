@@ -3,14 +3,17 @@ const ObjectId = Types.ObjectId;
 import TransactionRecord from '../../models/transactionRecord.js';
 import * as uuid from 'uuid';
 import Shift from '../../models/shift.js';
+import ZReadingModel from '../../models/zReading.js';
 
 const business = 'threeguysbangsar';
 const registerId = '64c8bd1a07f67d00075193ff';
+const storeId = '64c8bd1a07f67d00075193f3';
 
 const commonFieldsForOrder = {
     business,
     isCancelled: false,
     receiptNumbersBeforeFix: [],
+    channel: 2,
     fixedFee: 0,
     total: 1530,
     subtotal: 1500,
@@ -67,7 +70,7 @@ const mockDataForOrders = [
 
     /* 2 createdAt:8/8/2024, 6:31:13 PM*/
     {
-        createdTime: new Date('2024-10-08T18:31:13.462+08:00'),
+        createdTime: new Date('2024-10-25T18:31:13.462+08:00'),
         sequenceNumber: 50495,
         receiptNumber: '00000050495',
         invoiceSeqNumber: 50800,
@@ -120,6 +123,35 @@ const mockDataForShifts = [
     },
 ];
 
+const commonFieldsForZreading = {
+    business,
+    registerId,
+    storeId,
+};
+
+const zreadings = [
+    {
+        endTrxNumber: '01000001972',
+        zCount: 1,
+        closeTime: new Date('2024-09-15T21:00:58.619+08:00'),
+    },
+    {
+        endTrxNumber: '01000001972',
+        zCount: 2,
+        closeTime: new Date('2024-09-20T21:00:58.619+08:00'),
+    },
+    {
+        endTrxNumber: '01000001972',
+        closeTime: new Date('2024-10-20T21:00:58.619+08:00'),
+        zCount: 3,
+    },
+    {
+        endTrxNumber: '01010019723',
+        closeTime: new Date('2024-10-30T21:00:58.619+08:00'),
+        zCount: 4,
+    },
+];
+
 export async function prepareData() {
     await TransactionRecord.deleteMany({ business });
     await Shift.deleteMany({ business });
@@ -127,4 +159,8 @@ export async function prepareData() {
         mockDataForOrders.map((item) => ({ ...commonFieldsForOrder, ...item })),
     );
     await Shift.insertMany(mockDataForShifts);
+    await ZReadingModel.deleteMany({ business });
+    await ZReadingModel.insertMany(
+        zreadings.map((item) => ({ ...commonFieldsForZreading, ...item })),
+    );
 }
