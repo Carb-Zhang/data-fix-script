@@ -17,11 +17,11 @@ async function getShiftRegisters() {
     return records;
 }
 
-async function getRegisterShifts(business, registerId) {
+async function getRegisterShifts(business, registerId, storeId) {
     const shifts = await Shift.find({
         business,
         registerObjectId: registerId,
-        storeId: '64c8bd1a07f67d00075193f3',
+        storeId,
         closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
     })
         .sort({ openTime: -1 })
@@ -29,8 +29,8 @@ async function getRegisterShifts(business, registerId) {
     return shifts;
 }
 
-async function locateRegister(business, registerId) {
-    const shifts = await getRegisterShifts(business, registerId);
+async function locateRegister(business, registerId, storeId) {
+    const shifts = await getRegisterShifts(business, registerId, storeId);
     const filter = {
         business,
         registerId: new ObjectId(registerId),
@@ -52,7 +52,7 @@ async function locateRegister(business, registerId) {
 async function locateShiftScope() {
     const registers = await getShiftRegisters();
     for (let i = 0; i < registers.length; i++) {
-        await locateRegister(registers[i].business, registers[i].registerid);
+        await locateRegister(registers[i].business, registers[i].registerid, registers[i].storeid);
     }
 }
 
