@@ -1,8 +1,6 @@
 import TransactionRecord from '../../models/transactionRecord.js';
 import { checkOrderWithShift } from './checkOrderWithShift.js';
 import Shift from '../../models/shift.js';
-import { createWriteStream } from 'fs';
-import { sleep } from '../../utils/tools.js';
 import { Types } from 'mongoose';
 import { parse } from 'csv-parse';
 import { createReadStream } from 'fs';
@@ -25,7 +23,9 @@ async function getRegisterShifts(business, registerId) {
         registerObjectId: registerId,
         storeId: '64c8bd1a07f67d00075193f3',
         closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
-    }).lean();
+    })
+        .sort({ openTime: -1 })
+        .lean();
     return shifts;
 }
 
@@ -40,6 +40,7 @@ async function locateRegister(business, registerId) {
         $expr: { $ne: ['$modifiedTime', '$createdTime'] },
     };
     await TransactionRecord.find(filter)
+        .sort({ _id: 1 })
         .lean()
         .cursor()
         .addCursorFlag('noCursorTimeout', true)

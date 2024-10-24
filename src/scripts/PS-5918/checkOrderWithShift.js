@@ -1,12 +1,23 @@
+const ErrorType = {
+    orderMissInShift: 'orderMissInShift',
+    orderInWrongShift: 'orderInWrongShift',
+    wrongPreOrder: 'wrongPreOrder',
+    shiftMiss: 'shiftMiss',
+    shiftNotClose: 'shiftNotClose',
+};
+// 如果要排除未关闭shift的订单，使用modifiedTime>最后一个shift的closeTime
 export function checkOrderWithShift(business, registerId, order, shifts) {
+    // 不需要考虑cancelled的订单，因为如果是错误的cancelled订单，那么他只能在一个shift中取消，并不会影响shift的统计
     const onComplete = (checkResult) => {
         if (checkResult) {
             checkResult.shiftIds = checkResult.shiftIds.filter(Boolean);
             console.log(
                 [
-                    order.transactionId,
                     business,
                     registerId,
+                    order.transactionId,
+                    order.receiptNumber,
+                    order.preOrderId,
                     checkResult.message,
                     checkResult.shiftIds.join(','),
                 ].join(','),
@@ -18,12 +29,26 @@ export function checkOrderWithShift(business, registerId, order, shifts) {
     const availableShifts = shifts.filter(
         (it) => checkShiftByTime(order.createdTime, it) || checkShiftByTime(order.modifiedTime, it),
     );
+    // 未关闭shift的订单，也需要修正它的createdTime。但是cancelled的订单就不需要考虑了
     if (!availableShifts.length) {
-        console.log(`Error:can not get available shifts of order:${order.transactionId},`);
-        return onComplete({
-            message: 'lost',
-            shiftIds: [],
-        });
+        const lastShift = shifts[0];
+        const isShiftClosed = lastShift && order.createdTime <= lastShift.closeTime;
+        if (isShiftClosed) {
+            // console.log(
+            //   `Error:can not get available shifts of order,${order.transactionId}`
+            // );
+            return onComplete({
+                message: ErrorType.shiftMiss,
+                // message: "shiftLost",
+                shiftIds: [],
+            });
+        } else {
+            return onComplete({
+                message: ErrorType.shiftNotClose,
+                // message: "opening",
+                shiftIds: [],
+            });
+        }
     }
     if (!order.preOrderId) {
         // openOrder is included in one shift
@@ -55,24 +80,29 @@ function checkOpenOrderShift(transactionId, paidTime, shifts) {
     } else {
         const incorrectShift = shifts.filter((it) => it.shiftId !== correctShiftId)[0];
         if (!incorrectShift) {
-            console.log(`,Error:can not get the first shift of open order:${transactionId},`);
+            // console.log(
+            //   `Error:can not get the first shift of open order,${transactionId}`
+            // );
             return {
-                message: 'lost',
+                // message: "lost",
+                message: ErrorType.orderMissInShift,
                 shiftIds: [correctShiftId],
             };
         }
         const incorrectContains = incorrectShift.registerTransactions.find(
             (it) => it.transactionId === transactionId,
         );
-        if (!incorrectContains) {
+        if (incorrectContains) {
             return {
-                message: 'lost',
-                shiftIds: [correctShiftId],
+                // message: "incorrect",
+                message: ErrorType.orderInWrongShift,
+                shiftIds: [correctShiftId, incorrectShift.shiftId],
             };
         } else {
             return {
-                message: 'incorrect',
-                shiftIds: [correctShiftId, incorrectShift.shiftId],
+                // message: "lost",
+                message: ErrorType.orderMissInShift,
+                shiftIds: [correctShiftId],
             };
         }
     }
@@ -89,16 +119,17 @@ function checkPreOrderShift(shifts) {
         return null;
     } else {
         return {
-            message: 'preOrder regenerate',
+            // message: "incorrectPreOrder",
+            message: ErrorType.wrongPreOrder,
             shiftIds: shifts.map((it) => it.shiftId),
         };
     }
 }
 
 function checkShiftByTime(orderTime, shift) {
-    const openDate = new Date(shift.openTime);
-    const closeDate = new Date(shift.closeTime);
-    const orderDate = new Date(orderTime);
+    const openDate = shift.openTime;
+    const closeDate = shift.closeTime;
+    const orderDate = orderTime;
     return orderDate >= openDate && orderDate <= closeDate;
 }
 
