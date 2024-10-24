@@ -10,7 +10,7 @@ const ObjectId = Types.ObjectId;
 // const shiftRegistersCsv = 'src/scripts/PS-5918/shift-1024-1.csv';
 // const zreadingRegistersCsv = 'src/scripts/PS-5918/zreading_1025-1.csv';
 
-const shiftRegistersCsv = 'src/scripts/PS-5918/shift-1024.csv';
+const shiftRegistersCsv = 'src/scripts/PS-5918/shift_1025.csv';
 const zreadingRegistersCsv = 'src/scripts/PS-5918/zreading_1025.csv';
 
 async function getRegisters(isShift) {
@@ -186,8 +186,8 @@ async function locateZReadingScope() {
 }
 
 export async function locateScope() {
-    console.log('---------------start check zreading orders---------------');
-    await locateZReadingScope();
+    // console.log('---------------start check zreading orders---------------');
+    // await locateZReadingScope();
     console.log('---------------start check shift orders---------------');
     await locateShiftScope();
 }
