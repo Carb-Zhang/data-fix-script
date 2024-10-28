@@ -79,7 +79,8 @@ async function getRegisterZReadings(business, registerId, storeId) {
         business,
         storeId,
         registerId,
-        closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
+        // closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
+        closeTime: { $gt: new Date('2024-10-20T12:00:00.000+08:00') },
     })
         .select({
             closeTime: 1,
@@ -108,12 +109,14 @@ async function locateZReadingRegisterOrders(business, registerId, storeId) {
     const filter = {
         ...commonFilter(business, registerId),
         createdTime: {
-            $gte: new Date('2024-09-17T12:00:00.000+08:00'),
+            // $gte: new Date('2024-09-17T12:00:00.000+08:00'), // todo: 是否要加，特殊处理
+            $gte: new Date('2024-10-24T12:00:00.000+08:00'),
             $lt: zreadings[zreadings.length - 1].closeTime,
         },
         sequenceNumber: { $exists: true },
     };
 
+    // todo: 对于 cancel 订单，修复逻辑如何确定
     let currentIndex = 0;
     let zreadingStart = new Date('2024-09-17T12:00:00.000+08:00');
     let currentZReading = zreadings[currentIndex];
@@ -186,8 +189,8 @@ async function locateZReadingScope() {
 }
 
 export async function locateScope() {
-    // console.log('---------------start check zreading orders---------------');
-    // await locateZReadingScope();
-    console.log('---------------start check shift orders---------------');
-    await locateShiftScope();
+    console.log('---------------start check zreading orders---------------');
+    await locateZReadingScope();
+    // console.log('---------------start check shift orders---------------');
+    // await locateShiftScope();
 }
