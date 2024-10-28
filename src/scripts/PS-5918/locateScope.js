@@ -79,8 +79,8 @@ async function getRegisterZReadings(business, registerId, storeId) {
         business,
         storeId,
         registerId,
-        // closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
-        closeTime: { $gt: new Date('2024-10-20T12:00:00.000+08:00') },
+        closeTime: { $gt: new Date('2024-09-17T12:00:00.000+08:00') },
+        // closeTime: { $gt: new Date('2024-10-20T12:00:00.000+08:00') },
     })
         .select({
             closeTime: 1,
@@ -109,8 +109,8 @@ async function locateZReadingRegisterOrders(business, registerId, storeId) {
     const filter = {
         ...commonFilter(business, registerId),
         createdTime: {
-            // $gte: new Date('2024-09-17T12:00:00.000+08:00'), // todo: 是否要加，特殊处理
-            $gte: new Date('2024-10-24T12:00:00.000+08:00'),
+            $gte: new Date('2024-09-17T12:00:00.000+08:00'), // todo: 是否要加，特殊处理
+            // $gte: new Date('2024-10-24T12:00:00.000+08:00'),
             $lt: zreadings[zreadings.length - 1].closeTime,
         },
         sequenceNumber: { $exists: true },
@@ -125,6 +125,7 @@ async function locateZReadingRegisterOrders(business, registerId, storeId) {
     await TransactionRecord.find(filter)
         .select({
             createdTime: 1,
+            modifiedTime: 1,
             sequenceNumber: 1,
             transactionId: 1,
             receiptNumber: 1,
@@ -138,6 +139,7 @@ async function locateZReadingRegisterOrders(business, registerId, storeId) {
             ({
                 createdTime: oCreatedTime,
                 sequenceNumber: oSequenceNumber,
+                modifiedTime,
                 transactionId,
                 receiptNumber,
                 preOrderId,
@@ -159,7 +161,11 @@ async function locateZReadingRegisterOrders(business, registerId, storeId) {
                     return;
                 }
 
-                if (oSequenceNumber > toSequenceNumber(currentZReading.endTrxNumber)) {
+                // if (oSequenceNumber > toSequenceNumber(currentZReading.endTrxNumber)) {
+                if (
+                    oSequenceNumber <= toSequenceNumber(currentZReading.endTrxNumber) &&
+                    modifiedTime >= zreadingEnd
+                ) {
                     console.log(
                         [
                             business,
