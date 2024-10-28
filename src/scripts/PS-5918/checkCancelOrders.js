@@ -7,19 +7,20 @@ export async function checkCancelOrdersInZReading() {
         true,
     );
 
-    const filter = { $or: [], isCancelled: true };
-    orders.forEach(({ business, receiptNumber }) =>
-        filter.$or.push({
+    for (let i = 0; i < orders.length; i++) {
+        const { business, receiptNumber } = orders[i];
+        const order = await TransactionRecord.findOne({
             business,
             receiptNumber,
-        }),
-    );
-
-    const res = await TransactionRecord.find(filter)
-        .select({
-            business: 1,
-            receiptNumber: 1,
+            isCancelled: true,
         })
-        .lean();
-    console.log(res);
+            .select({
+                business: 1,
+                receiptNumber: 1,
+            })
+            .lean();
+        if (order) {
+            console.log(order);
+        }
+    }
 }
