@@ -4,6 +4,6 @@ import { checkCancelOrdersInZReading } from './checkCancelOrders.js';
 
 export async function run() {
     // await prepareData();
-    // await locateScope();
-    await checkCancelOrdersInZReading();
+    await locateScope();
+    // await checkCancelOrdersInZReading();
 }
