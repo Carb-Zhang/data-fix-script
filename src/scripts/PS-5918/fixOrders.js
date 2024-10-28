@@ -15,5 +15,7 @@ export async function fixOrders() {
 }
 
 // manual handle cancel orders
+// 暂不处理
 
 // 由于 cancel 时间的不可控，close zreading 之后仍可以 cancel, 将造成 zreading 数据的微小影响
+// 间隔 zreading cancel
