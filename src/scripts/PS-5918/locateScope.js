@@ -99,6 +99,9 @@ function toSequenceNumber(endTrxNumber) {
     return parseInt(number);
 }
 
+// 有问题的订单：
+// 1. close 时因为 createTime 比较小而漏掉
+// 2. close 时因为 createTime 比较小而算入过去的某个 zreading
 async function locateZReadingRegisterOrders(business, registerId, storeId) {
     const zreadings = await getRegisterZReadings(business, registerId, storeId);
     if (zreadings.length === 0) {
