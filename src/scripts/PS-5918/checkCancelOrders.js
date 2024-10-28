@@ -24,3 +24,19 @@ export async function checkCancelOrdersInZReading() {
         }
     }
 }
+
+//   {
+//     _id: new ObjectId("66f968451ced9400062ad344"),
+//     receiptNumber: '00000005784',
+//     business: 'sagecafe'
+//   }
+//   {
+//     _id: new ObjectId("66fa5af3735b590007240f8c"),
+//     receiptNumber: '00000040294',
+//     business: 'youandme'
+//   }
+//   {
+//     _id: new ObjectId("66fa5aef28ad0300070a2ae1"),
+//     receiptNumber: '00000040295',
+//     business: 'youandme'
+//   }
