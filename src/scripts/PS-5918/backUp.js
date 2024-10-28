@@ -1,6 +1,7 @@
 import TransactionRecord from '../../models/transactionRecord.js';
 import { checkOrderWithShift } from './checkOrderWithShift.js';
 import { ordersBefore0917 } from './records/ordersBefore0917.js';
+import { registersToFix } from './records/registersToFix.js';
 import Shift from '../../models/shift.js';
 import ZReading from '../../models/zReading.js';
 import { Types } from 'mongoose';
@@ -17,7 +18,7 @@ async function getAllOrders() {
     return [...orders1, ...orders2, ...ordersBefore0917];
 }
 
-export async function backUp() {
+async function backUpOrders() {
     const allOrders = await getAllOrders();
     console.log(
         'business,receiptNumber,storeId,registerId,modifiedTime,createdTime,isCancelled,transactionId,preOrderId',
@@ -43,4 +44,27 @@ export async function backUp() {
             );
         }
     }
+}
+
+async function backUpOneRegisterZReading(business, registerId, storeId, firstOrderCreateTime) {
+    const zreadings = await ZReading.find({
+        business,
+        registerId,
+        storeId,
+        closeTime: { $gt: new Date(firstOrderCreateTime) },
+    })
+        .lean()
+        .sort({ zCount: 1 });
+    zreadings.forEach((v) => console.log(v));
+}
+
+async function backUpZReadings() {
+    for (let i = 0; i < registersToFix.length; i++) {
+        const { business, registerId, storeId, firstOrderCreateTime } = registersToFix[i];
+        await backUpOneRegisterZReading(business, registerId, storeId, firstOrderCreateTime);
+    }
+}
+
+export async function backUp() {
+    await backUpZReadings();
 }
