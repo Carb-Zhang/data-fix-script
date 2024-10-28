@@ -365,6 +365,11 @@ content-type@~1.0.4, content-type@~1.0.5:
   resolved "https://registry.npmmirror.com/content-type/-/content-type-1.0.5.tgz#8b773162656d1d1086784c8f23a54ce6d73d7918"
   integrity sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==
 
+convert-csv-to-json@^2.49.0:
+  version "2.49.0"
+  resolved "https://registry.npmmirror.com/convert-csv-to-json/-/convert-csv-to-json-2.49.0.tgz#7243bdceed354e3e53b163235cc30312080d9d4c"
+  integrity sha512-jGpQ+bkhVwMG9FF3IsK624X7u2HjYFXdtkLAkLouaewgYK5OZdEHZIMKD7dt/bCMUjR/zwg0o1B0cKFZrB22iQ==
+
 cookie-signature@1.0.6:
   version "1.0.6"
   resolved "https://registry.npmmirror.com/cookie-signature/-/cookie-signature-1.0.6.tgz#e303a882b342cc3ee8ca513a79999734dab3ae2c"
