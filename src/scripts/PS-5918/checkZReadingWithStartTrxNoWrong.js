@@ -14,15 +14,26 @@ async function getOrdersNumberInfo(business, storeId, registerId, startTime, end
         transactionType: { $ne: 'PreOrder' },
     };
     const orders = await TransactionRecord.find(filter)
-        .select({ sequenceNumber: 1, invoiceSeqNumber: 1 })
+        .select({
+            sequenceNumber: 1,
+            invoiceSeqNumber: 1,
+            transactionType: 1,
+            isCancelled: 1,
+            modifiedTime: 1,
+        })
         .lean();
     const sequenceNumbers = _.map(orders, 'sequenceNumber').filter((num) => num !== undefined);
     const invoiceSeqNumbers = _.map(orders, 'invoiceSeqNumber').filter((num) => num !== undefined);
+    const modifiedTimes = _.map(
+        _.filter(orders, (o) => !o.isCancelled && o.transactionType === 'Sale'),
+        'modifiedTime',
+    ).filter((time) => time !== undefined);
     return {
         maxSeq: _.max(sequenceNumbers),
         maxInv: _.max(invoiceSeqNumbers),
         minSeq: _.min(sequenceNumbers),
         minInv: _.min(invoiceSeqNumbers),
+        maxModifiedTime: _.max(modifiedTimes),
     };
 }
 
@@ -71,7 +82,7 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
         .eachAsync(async (doc) => {
             const { closeTime, startORNumber, endORNumber, startTrxNumber, endTrxNumber, _id } =
                 doc;
-            const { minSeq, minInv, maxSeq, maxInv } = await getOrdersNumberInfo(
+            const { minSeq, minInv, maxSeq, maxInv, maxModifiedTime } = await getOrdersNumberInfo(
                 business,
                 storeId,
                 registerId,
@@ -80,22 +91,40 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
             );
 
             lastZReadingCloseTime = closeTime;
+            let maxNumberWrong = '';
+            let modifyTimeWrong = '';
 
             if (
                 minSeq !== toSequenceNumber(startTrxNumber) ||
                 minInv !== toSequenceNumber(startORNumber) ||
                 maxSeq !== toSequenceNumber(endTrxNumber) ||
-                maxInv !== toSequenceNumber(endORNumber)
+                maxInv !== toSequenceNumber(endORNumber) ||
+                maxModifiedTime >= closeTime
             ) {
-                console.log(
-                    [business, storeId, registerId, _id, minSeq, minInv, maxSeq, maxInv].join(','),
-                );
                 if (
                     maxSeq !== toSequenceNumber(endTrxNumber) ||
                     maxInv !== toSequenceNumber(endORNumber)
                 ) {
-                    console.log('max number wrong');
+                    maxNumberWrong = 'maxNumberWrong';
                 }
+                if (maxModifiedTime >= closeTime) {
+                    modifyTimeWrong = 'modifyTimeWrong';
+                }
+                console.log(
+                    [
+                        business,
+                        storeId,
+                        registerId,
+                        _id,
+                        minSeq,
+                        minInv,
+                        maxSeq,
+                        maxInv,
+                        maxNumberWrong,
+                        modifyTimeWrong,
+                    ].join(','),
+                );
+
                 // console.log(
                 //     [
                 //         business,
@@ -123,6 +152,8 @@ export async function checkZReadingWithStartTrxNoWrong() {
             'startORNumber',
             'endTrxNumber',
             'endORNumber',
+            'maxNumberWrong',
+            'modifyTimeWrong',
         ].join(','),
     );
     for (let i = 0; i < registersToFix.length; i++) {
