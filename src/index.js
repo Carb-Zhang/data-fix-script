@@ -10,6 +10,7 @@ async function runScript(scriptName) {
 
 async function main() {
     await connectMongoDB();
+    console.log(new Date().toISOString(), 'Start');
 
     if (process.argv[2]) {
         await runScript(process.argv[2]);
@@ -24,4 +25,3 @@ main()
         process.exit(0);
     })
     .catch((err) => console.log(err));
-
