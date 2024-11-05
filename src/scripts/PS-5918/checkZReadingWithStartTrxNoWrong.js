@@ -111,6 +111,18 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
 }
 
 export async function checkZReadingWithStartTrxNoWrong() {
+    console.log(
+        [
+            'business',
+            'storeId',
+            'registerId',
+            'zreadingId',
+            'startTrxNumber',
+            'startORNumber',
+            'endTrxNumber',
+            'endORNumber',
+        ].join(','),
+    );
     for (let i = 0; i < registersToFix.length; i++) {
         const { business, storeId, registerId, firstOrderCreateTime } = registersToFix[i];
         await checkRegister(business, storeId, registerId, firstOrderCreateTime);
