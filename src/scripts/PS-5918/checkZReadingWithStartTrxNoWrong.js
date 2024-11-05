@@ -46,8 +46,8 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
         .lean();
     let lastZReadingCloseTime = _.get(res, '0.closeTime');
     if (!lastZReadingCloseTime) {
-        console.log('Get lastZReadingCloseTime fail');
-        return;
+        console.log('Get lastZReadingCloseTime fail', business);
+        lastZReadingCloseTime = new Date('2024-09-01T12:00:00.000+08:00');
     }
 
     await ZReading.find({
@@ -90,18 +90,24 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
                 console.log(
                     [business, storeId, registerId, _id, minSeq, minInv, maxSeq, maxInv].join(','),
                 );
-                console.log(
-                    [
-                        business,
-                        storeId,
-                        registerId,
-                        _id,
-                        toSequenceNumber(startTrxNumber),
-                        toSequenceNumber(startORNumber),
-                        toSequenceNumber(endTrxNumber),
-                        toSequenceNumber(endORNumber),
-                    ].join(','),
-                );
+                if (
+                    maxSeq !== toSequenceNumber(endTrxNumber) ||
+                    maxInv !== toSequenceNumber(endORNumber)
+                ) {
+                    console.log('max number wrong');
+                }
+                // console.log(
+                //     [
+                //         business,
+                //         storeId,
+                //         registerId,
+                //         _id,
+                //         toSequenceNumber(startTrxNumber),
+                //         toSequenceNumber(startORNumber),
+                //         toSequenceNumber(endTrxNumber),
+                //         toSequenceNumber(endORNumber),
+                //     ].join(','),
+                // );
             }
         });
 }
