@@ -88,8 +88,8 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
             if (
                 minSeq !== toSequenceNumber(startTrxNumber) ||
                 minInv !== toSequenceNumber(startORNumber) ||
-                maxInv !== toSequenceNumber(endORNumber) ||
-                maxSeq !== toSequenceNumber(endTrxNumber)
+                maxSeq !== toSequenceNumber(endTrxNumber) ||
+                maxInv !== toSequenceNumber(endORNumber)
             ) {
                 console.log(
                     [business, storeId, registerId, _id, minSeq, minInv, maxSeq, maxInv].join(','),
@@ -100,10 +100,10 @@ async function checkRegister(business, storeId, registerId, firstOrderCreateTime
                         storeId,
                         registerId,
                         _id,
-                        startTrxNumber,
-                        startORNumber,
-                        endTrxNumber,
-                        endORNumber,
+                        toSequenceNumber(startTrxNumber),
+                        toSequenceNumber(startORNumber),
+                        toSequenceNumber(endTrxNumber),
+                        toSequenceNumber(endORNumber),
                     ].join(','),
                 );
             }
