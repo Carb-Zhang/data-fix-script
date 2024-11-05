@@ -35,10 +35,6 @@ function toSequenceNumber(zreadingNumber) {
 }
 
 async function checkRegister(business, storeId, registerId, firstOrderCreateTime) {
-    if (business !== 'opcfactoryoutletcaloocan') {
-        return;
-    }
-
     const res = await ZReading.find({
         business,
         storeId,
