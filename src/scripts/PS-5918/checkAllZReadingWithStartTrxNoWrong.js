@@ -59,7 +59,6 @@ async function checkRegister(business, storeId, registerId) {
         .lean();
     let lastZReadingCloseTime = _.get(res, '0.closeTime');
     if (!lastZReadingCloseTime) {
-        console.log('Get lastZReadingCloseTime fail', business);
         lastZReadingCloseTime = new Date('2024-09-01T12:00:00.000+08:00');
     }
 
@@ -93,31 +92,37 @@ async function checkRegister(business, storeId, registerId) {
             );
 
             lastZReadingCloseTime = closeTime;
-            let maxNumberWrong = '';
+            let needFixMin = '';
+            let needFixMax = '';
             let modifyTimeWrong = '';
 
             if (
                 minSeq !== toSequenceNumber(startTrxNumber) ||
                 minInv !== toSequenceNumber(startORNumber) ||
-                maxSeq > toSequenceNumber(endTrxNumber) ||
-                maxInv > toSequenceNumber(endORNumber) ||
+                maxSeq !== toSequenceNumber(endTrxNumber) ||
+                maxInv !== toSequenceNumber(endORNumber) ||
                 maxModifiedTime >= closeTime
             ) {
                 if (
-                    maxSeq !== toSequenceNumber(endTrxNumber) ||
-                    maxInv !== toSequenceNumber(endORNumber)
+                    (minSeq || -1) < (toSequenceNumber(startTrxNumber) || -1) ||
+                    (minInv || -1) < (toSequenceNumber(startORNumber) || -1)
                 ) {
-                    maxNumberWrong = 'maxNumberWrong';
+                    needFixMin = 'needFixMin';
                 }
                 if (
-                    minSeq > toSequenceNumber(startTrxNumber) ||
-                    minInv > toSequenceNumber(startORNumber)
+                    (maxSeq || -1) > (toSequenceNumber(endTrxNumber) || -1) ||
+                    (maxInv || -1) > (toSequenceNumber(endORNumber) || -1)
                 ) {
-                    maxNumberWrong = '********';
+                    needFixMax = 'needFixMax';
                 }
                 if (maxModifiedTime >= closeTime) {
                     modifyTimeWrong = 'modifyTimeWrong';
                 }
+
+                if (!needFixMin && !needFixMax && !modifyTimeWrong) {
+                    return;
+                }
+
                 console.log(
                     [
                         business,
@@ -128,7 +133,8 @@ async function checkRegister(business, storeId, registerId) {
                         minInv,
                         maxSeq,
                         maxInv,
-                        maxNumberWrong,
+                        needFixMin,
+                        needFixMax,
                         modifyTimeWrong,
                     ].join(','),
                 );
@@ -147,7 +153,8 @@ export async function checkAllZReadingWithStartTrxNoWrong() {
             'startORNumber',
             'endTrxNumber',
             'endORNumber',
-            'maxNumberWrong',
+            'needFixMin',
+            'needFixMax',
             'modifyTimeWrong',
         ].join(','),
     );
