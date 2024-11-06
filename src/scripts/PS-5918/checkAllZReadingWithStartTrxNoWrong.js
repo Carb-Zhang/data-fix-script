@@ -1,7 +1,6 @@
 import TransactionRecord from '../../models/transactionRecord.js';
 import ZReading from '../../models/zReading.js';
 import { Types } from 'mongoose';
-import { registersToFix } from './records/registersToFix.js';
 import { parseCsv } from '../../utils/csv.js';
 import _ from 'lodash';
 const ObjectId = Types.ObjectId;
@@ -47,7 +46,7 @@ function toSequenceNumber(zreadingNumber) {
 }
 
 async function checkRegister(business, storeId, registerId) {
-    const firstOrderCreateTime = '2024-09-10T12:00:00.000+08:00';
+    const firstOrderCreateTime = '2024-09-03T12:00:00.000+08:00';
     const res = await ZReading.find({
         business,
         storeId,
@@ -159,9 +158,10 @@ export async function checkAllZReadingWithStartTrxNoWrong() {
         ].join(','),
     );
     const allRegisters = await parseCsv('src/scripts/PS-5918/zreading_1025.csv', true);
-    const needCheckRegisters = allRegisters.filter(
-        ({ registerId }) => !registersToFix.find((item) => item.registerId === registerId),
-    );
+    const needCheckRegisters = allRegisters;
+    // const needCheckRegisters = allRegisters.filter(
+    //     ({ registerId }) => !registersToFix.find((item) => item.registerId === registerId),
+    // );
     for (let i = 0; i < needCheckRegisters.length; i++) {
         const { business, storeId, registerId } = needCheckRegisters[i];
         await checkRegister(business, storeId, registerId);
