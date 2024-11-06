@@ -198,8 +198,8 @@ async function locateZReadingScope() {
 }
 
 export async function locateScope() {
-    console.log('---------------start check zreading orders---------------');
-    await locateZReadingScope();
-    // console.log('---------------start check shift orders---------------');
-    // await locateShiftScope();
+    // console.log('---------------start check zreading orders---------------');
+    // await locateZReadingScope();
+    console.log('---------------start check shift orders---------------');
+    await locateShiftScope();
 }

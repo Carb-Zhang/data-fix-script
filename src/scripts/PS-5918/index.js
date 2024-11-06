@@ -8,7 +8,5 @@ import { fixZReadingWithStartTrxNoWrong } from './fixZReadingWithStartTrxNoWrong
 import { checkAllZReadingWithStartTrxNoWrong } from './checkAllZReadingWithStartTrxNoWrong.js';
 
 export async function run() {
-    // await prepareData();
-    // await locateScope();
-    await fixZReadingWithStartTrxNoWrong();
+    await locateScope();
 }
