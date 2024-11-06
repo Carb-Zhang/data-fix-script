@@ -25,7 +25,8 @@ async function readFile() {
     const records = [];
     const parser = createReadStream(
         // 'src/scripts/PS-5918/records/zreadingWithStartNumberIssue3.csv',
-        'src/scripts/PS-5918/records/zreadingWithStartNumberIssue4.csv',
+        // 'src/scripts/PS-5918/records/zreadingWithStartNumberIssue4.csv',
+        'src/scripts/PS-5918/records/zreadingWithStartNumberIssue5.csv',
     ).pipe(parse({ columns: true }));
     for await (const record of parser) {
         records.push(record);
