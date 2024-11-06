@@ -1,0 +1,2 @@
+1. when fix zreading start info
+- the order(66e9171a134a670007a97a83) "invoiceSeqNumber" : 0, affect zreading(66e980c49678140007832ee5) already ask pos to research
