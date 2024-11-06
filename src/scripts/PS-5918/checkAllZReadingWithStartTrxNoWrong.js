@@ -99,8 +99,8 @@ async function checkRegister(business, storeId, registerId) {
             if (
                 minSeq !== toSequenceNumber(startTrxNumber) ||
                 minInv !== toSequenceNumber(startORNumber) ||
-                maxSeq !== toSequenceNumber(endTrxNumber) ||
-                maxInv !== toSequenceNumber(endORNumber) ||
+                maxSeq > toSequenceNumber(endTrxNumber) ||
+                maxInv > toSequenceNumber(endORNumber) ||
                 maxModifiedTime >= closeTime
             ) {
                 if (
@@ -108,6 +108,12 @@ async function checkRegister(business, storeId, registerId) {
                     maxInv !== toSequenceNumber(endORNumber)
                 ) {
                     maxNumberWrong = 'maxNumberWrong';
+                }
+                if (
+                    minSeq > toSequenceNumber(startTrxNumber) ||
+                    minInv > toSequenceNumber(startORNumber)
+                ) {
+                    maxNumberWrong = '********';
                 }
                 if (maxModifiedTime >= closeTime) {
                     modifyTimeWrong = 'modifyTimeWrong';
