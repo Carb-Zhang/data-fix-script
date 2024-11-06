@@ -10,5 +10,5 @@ import { checkAllZReadingWithStartTrxNoWrong } from './checkAllZReadingWithStart
 export async function run() {
     // await prepareData();
     // await locateScope();
-    await checkAllZReadingWithStartTrxNoWrong();
+    await fixZReadingWithStartTrxNoWrong();
 }

@@ -24,7 +24,8 @@ const generateReceiptNumber = (registerNum, seqNum) => {
 async function readFile() {
     const records = [];
     const parser = createReadStream(
-        'src/scripts/PS-5918/records/zreadingWithStartNumberIssue3.csv',
+        // 'src/scripts/PS-5918/records/zreadingWithStartNumberIssue3.csv',
+        'src/scripts/PS-5918/records/zreadingWithStartNumberIssue4.csv',
     ).pipe(parse({ columns: true }));
     for await (const record of parser) {
         records.push(record);
@@ -46,8 +47,8 @@ async function fixOne(zreadingInfo) {
             $set: {
                 startTrxNumber: generateReceiptNumber(registerNum, startTrxNumber),
                 startORNumber: generateReceiptNumber(registerNum, startORNumber),
-                endTrxNumber: generateReceiptNumber(registerNum, endTrxNumber),
-                endORNumber: generateReceiptNumber(registerNum, endORNumber),
+                // endTrxNumber: generateReceiptNumber(registerNum, endTrxNumber),
+                // endORNumber: generateReceiptNumber(registerNum, endORNumber),
             },
         },
         { returnOriginal: true },
