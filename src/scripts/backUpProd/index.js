@@ -42,9 +42,9 @@ const CollectionConfig = {
     },
 };
 
-const businessName = 'lydiaslechonquezoncityinc';
-const registerId = new ObjectId('64ed4ea120dd1900066ac318');
-const storeId = new ObjectId('654c6395d390470007e97cf8');
+const businessName = 'restoranseribidara';
+const registerId = new ObjectId('624bd5ae98a4cf00075aaac4');
+const storeId = new ObjectId('624bd5ae98a4cf00075aaac3');
 const startTime = new Date('2024-08-01T12:00:00.000+08:00');
 const filters = {
     [CollectionType.BUSINESS]: { name: businessName },
