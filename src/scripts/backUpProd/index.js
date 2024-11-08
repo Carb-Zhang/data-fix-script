@@ -65,9 +65,11 @@ const filters = {
     // [CollectionType.ONLINEORDER]: {},
 };
 
+const connOptions = { connectTimeoutMS: 10000 };
+
 async function initConns() {
-    connSource = await mongoose.createConnection(MONGODB_URL_SOURCE).asPromise();
-    connTarget = await mongoose.createConnection(MONGODB_URL_TARGET).asPromise();
+    connSource = await mongoose.createConnection(MONGODB_URL_SOURCE, connOptions).asPromise();
+    connTarget = await mongoose.createConnection(MONGODB_URL_TARGET, connOptions).asPromise();
 }
 
 async function syncData(collectionType) {
