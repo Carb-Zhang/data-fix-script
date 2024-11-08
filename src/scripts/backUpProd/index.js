@@ -6,9 +6,13 @@ import onlineTransactionSchema from './models/onlineTransaction.js';
 import { Types } from 'mongoose';
 const ObjectId = Types.ObjectId;
 
+// const MONGODB_URL_SOURCE =
+//     'mongodb+srv://fat:uZRvjZKkaIXzNXy4@testcluster.ibxvq.mongodb.net/server';
+// const MONGODB_URL_TARGET = 'mongodb://127.0.0.1:27017/server';
 const MONGODB_URL_SOURCE =
+    'mongodb+srv://production-user:9iiRuToztDXPbk@v2021.gfskh.mongodb.net/server';
+const MONGODB_URL_TARGET =
     'mongodb+srv://fat:uZRvjZKkaIXzNXy4@testcluster.ibxvq.mongodb.net/server';
-const MONGODB_URL_TARGET = 'mongodb://127.0.0.1:27017/server';
 let connSource = null;
 let connTarget = null;
 
@@ -38,8 +42,9 @@ const CollectionConfig = {
     },
 };
 
-const businessName = 'onlytestaccount';
+const businessName = 'imikaempiresdnbhd';
 const registerId = new ObjectId('5a7d83e36878b592402ea7ef');
+const storeId = new ObjectId('5a7a7c1ced05bb96404a58d1');
 const startTime = new Date('2024-08-01T12:00:00.000+08:00');
 const filters = {
     [CollectionType.BUSINESS]: { name: businessName },
@@ -51,6 +56,7 @@ const filters = {
     },
     [CollectionType.ONLINEORDER]: {
         business: businessName,
+        storeId,
         createdTime: { $gt: startTime },
     },
     // [CollectionType.BUSINESS]: {},
@@ -70,7 +76,6 @@ async function syncData(collectionType) {
     const targetModel = connTarget.model(config.name, config.schema);
     await sourceModel
         .find(filters[collectionType])
-        .limit(1)
         .lean()
         .cursor()
         .addCursorFlag('noCursorTimeout', true)
