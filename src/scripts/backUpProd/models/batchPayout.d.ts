@@ -1,0 +1,34 @@
+import { Document } from 'mongoose';
+interface BatchPayout extends Document {
+    businessName: string;
+    currency: string;
+    countryCode: string;
+    endDate: Date;
+    bankAccountId: string;
+    payoutItemCount: number;
+    totalStorehubFee: number;
+    totalPaymentGatewayFee: number;
+    totalStorehubLogisticsFee: number;
+    totalBankTransactionFee: number;
+    totalPickupSmsFee?: number;
+    totalOrderAmount?: number;
+    totalPayout: number;
+    totalAdjustments: number;
+    totalOrderPayout: number;
+    merchantTotalProductRevenue: number;
+    merchantTotalDeliveryRevenue: number;
+    merchantBankAccountName: string;
+    merchantBankCode: string;
+    merchantBankAccountNumber: string;
+    merchantBankName?: string;
+    storeIds: string[];
+    createdTime: Date;
+    modifiedTime: Date;
+    totalVoucherAmount?: number;
+    totalPromotionAmount?: number;
+    totalOrderVoucherAmount?: number;
+    totalOrderPromotionAmount?: number;
+    totalOfflinePaidAmount?: number;
+}
+declare const BatchPayoutModel: import("mongoose").Model<BatchPayout, {}, {}>;
+export default BatchPayoutModel;

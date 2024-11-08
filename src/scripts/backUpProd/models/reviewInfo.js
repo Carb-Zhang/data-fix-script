@@ -1,0 +1,48 @@
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
+const ReviewInfoSchema = new Schema(
+    {
+        business: {
+          type: String,
+          required: true,
+        },
+
+        refType: {
+            type: String,
+            enum: ['store', 'product'],
+            required: true,
+        },
+
+        refId: {
+            type: String,
+            required: true,
+        },
+
+        rating: {
+            type: Number,
+        },
+
+        ratingCount: {
+            type: Number,
+        },
+
+        priceLevel: {
+            type: Number
+        },
+
+        placeId: {
+            type: String
+        }
+    },
+    {
+        autoIndex: process.env.NODE_ENV == 'development',
+        timestamps: {
+            createdAt: 'createdTime',
+            updatedAt: 'modifiedTime',
+        },
+    },
+);
+
+ReviewInfoSchema.index({ refId: 1, refType: 1, business: 1 }, { unique: true });
+module.exports = mongoose.model('ReviewInfo', ReviewInfoSchema);
