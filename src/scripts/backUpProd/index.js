@@ -42,9 +42,9 @@ const CollectionConfig = {
     },
 };
 
-const businessName = 'farmfreshstation';
-const registerId = new ObjectId('6509236dc34e560007f7c973');
-const storeId = new ObjectId('6509236dc34e560007f7c971');
+const businessName = 'lydiaslechonquezoncityinc';
+const registerId = new ObjectId('64ed4ea120dd1900066ac318');
+const storeId = new ObjectId('654c6395d390470007e97cf8');
 const startTime = new Date('2024-08-01T12:00:00.000+08:00');
 const filters = {
     [CollectionType.BUSINESS]: { name: businessName },
