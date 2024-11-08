@@ -42,9 +42,9 @@ const CollectionConfig = {
     },
 };
 
-const businessName = 'restoranseribidara';
-const registerId = new ObjectId('624bd5ae98a4cf00075aaac4');
-const storeId = new ObjectId('624bd5ae98a4cf00075aaac3');
+const businessName = 'davaofamous';
+const registerId = new ObjectId('63cf530f76a1da0009d446eb');
+const storeId = new ObjectId('667e4f37532f42000640dfcc');
 const startTime = new Date('2024-08-01T12:00:00.000+08:00');
 const filters = {
     [CollectionType.BUSINESS]: { name: businessName },
