@@ -42,9 +42,9 @@ const CollectionConfig = {
     },
 };
 
-const businessName = 'imikaempiresdnbhd';
-const registerId = new ObjectId('5a7d83e36878b592402ea7ef');
-const storeId = new ObjectId('5a7a7c1ced05bb96404a58d1');
+const businessName = 'farmfreshstation';
+const registerId = new ObjectId('6509236dc34e560007f7c973');
+const storeId = new ObjectId('6509236dc34e560007f7c971');
 const startTime = new Date('2024-08-01T12:00:00.000+08:00');
 const filters = {
     [CollectionType.BUSINESS]: { name: businessName },
