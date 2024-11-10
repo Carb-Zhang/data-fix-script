@@ -5,15 +5,14 @@ import { parseCsv } from '../../../utils/csv.js';
 import _ from 'lodash';
 
 export async function test() {
-    const registers = await parseCsv('src/scripts/PS-5918/test.csv');
+    const registers = await parseCsv('src/scripts/PS-5918/supportPos/test.csv');
     let businessInfos = await BusinessModel.find({
         name: { $in: registers.map(({ business }) => business) },
     }).lean();
-    businessInfos = null;
-    console.log(businessInfos);
-    registers.forEach(({ registerId }) => {
-        const register = businessInfos.find(
-            (bus) => bus.cashRegisters._id.toString() === registerId,
+    registers.forEach(({ registerId, business }) => {
+        const businessInfo = businessInfos.find((bus) => bus.name === business);
+        const register = businessInfo.cashRegisters.find(
+            (bus) => bus._id.toString() === registerId,
         );
         console.log([registerId, register.apiToken].join(','));
     });
@@ -24,7 +23,7 @@ export async function test() {
             registerObjectId: registerId,
         });
         shifts.forEach((shift) => {
-            console.log([shift.registerId, shift.shiftId, shift.closeTime].join(','));
+            console.log([registerId, shift.shiftId, shift.closeTime.toISOString()].join(','));
         });
     }
 }
