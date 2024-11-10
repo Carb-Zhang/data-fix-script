@@ -47,13 +47,48 @@ function commonFilter(business, registerId) {
     };
 }
 
+async function getOrdersChangedByFixZReading(business, registerId) {
+    const records = [];
+    const parser = createReadStream('src/scripts/PS-5918/records/oldOrdersForZReading.csv').pipe(
+        parse({ columns: true }),
+    );
+    for await (const record of parser) {
+        records.push(record);
+    }
+    return records
+        .filter((re) => re.business === business && re.registerId === registerId)
+        .map(({ transactionId }) => transactionId);
+}
+
 async function locateShiftRegisterOrders(business, registerId, storeId) {
     const shifts = await getRegisterShifts(business, registerId, storeId);
     const filter = {
         ...commonFilter(business, registerId),
         isCancelled: { $ne: true },
+        modifiedTime: { $gt: new Date('2024-10-20T12:00:00.000+08:00') },
     };
     await TransactionRecord.find(filter)
+        .sort({ _id: 1 })
+        .lean()
+        .cursor()
+        .addCursorFlag('noCursorTimeout', true)
+        .eachAsync((order) => {
+            checkOrderWithShift(business, registerId, order, shifts);
+        });
+
+    const transactionIdsChangedByFixZReading = await getOrdersChangedByFixZReading(
+        business,
+        registerId,
+    );
+    if (transactionIdsChangedByFixZReading.length === 0) {
+        return;
+    }
+    await TransactionRecord.find({
+        business,
+        registerId: new ObjectId(registerId),
+        transactionId: { $in: transactionIdsChangedByFixZReading },
+        isCancelled: { $ne: true },
+    })
         .sort({ _id: 1 })
         .lean()
         .cursor()

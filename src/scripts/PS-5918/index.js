@@ -9,5 +9,5 @@ import { checkAllZReadingWithStartTrxNoWrong } from './checkAllZReadingWithStart
 import { test } from './supportPos/test.js';
 
 export async function run() {
-    await test();
+    await locateScope();
 }
