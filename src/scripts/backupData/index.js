@@ -68,6 +68,21 @@ async function backupToCsv() {
     }
 }
 
+async function checkCancel() {
+    const records = await getOrdersChangedByFixZReading();
+    for (let i = 0; i < records.length; i++) {
+        const { business, transactionId, registerId } = records[i];
+        const order = await TransactionRecord.findOne({
+            business,
+            registerId: new ObjectId(registerId),
+            transactionId,
+        }).lean();
+        if (order && order.isCancelled) {
+            console.log(order);
+        }
+    }
+}
+
 export async function getRegisterTokens() {
     const orders = await getOrdersChangedByFixZReading();
 
@@ -95,5 +110,5 @@ export async function getRegisterTokens() {
 }
 
 export async function run() {
-    await getRegisterTokens();
+    await checkCancel();
 }
