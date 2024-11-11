@@ -17,13 +17,17 @@ async function backupToJson() {}
 
 async function backupToCsv(records) {
     for (let i = 0; i < records.length; i++) {
-        const { business, transactionId, receiptNumber } = records[i];
-        const order = await TransactionRecord.findOne({ business, receiptNumber }).lean();
+        const { business, transactionId, registerId } = records[i];
+        const order = await TransactionRecord.findOne({
+            business,
+            registerId: new ObjectId(registerId),
+            transactionId,
+        }).lean();
         if (!order) {
-            console.log([business, transactionId, receiptNumber, 'order not found'].join(','));
+            console.log([business, transactionId, registerId, 'order not found'].join(','));
         } else {
             console.log(
-                [business, transactionId, receiptNumber, order.createdTime.toISOString()].join(','),
+                [business, transactionId, registerId, order.createdTime.toISOString()].join(','),
             );
         }
     }
