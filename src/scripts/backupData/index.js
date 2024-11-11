@@ -3,10 +3,13 @@ import Shift from '../../models/shift.js';
 import { Types } from 'mongoose';
 import { parse } from 'csv-parse';
 import { createReadStream, createWriteStream } from 'fs';
-const ObjectId = Types.ObjectId;
 import csvToJson from 'convert-csv-to-json';
 import { shiftsToBackUp } from './record/shiftsToBackUp.js';
 
+import BusinessModel from '../../models/business.js';
+import _ from 'lodash';
+
+const ObjectId = Types.ObjectId;
 const writeEventStream = createWriteStream('shiftsBackupForFixShifts.json');
 
 function writeOneEventDoc(str) {
@@ -65,6 +68,28 @@ async function backupToCsv() {
     }
 }
 
+export async function getRegisterTokens() {
+    const orders = await getOrdersChangedByFixZReading();
+
+    const registers = _.uniqBy(
+        orders.map(({ registerId, business }) => ({ registerId, business })),
+        'registerId',
+    );
+
+    let businessInfos = await BusinessModel.find({
+        name: { $in: registers.map(({ business }) => business) },
+    })
+        .select({ name: 1, cashRegisters: 1 })
+        .lean();
+    registers.forEach(({ registerId, business }) => {
+        const businessInfo = businessInfos.find((bus) => bus.name === business);
+        const register = businessInfo.cashRegisters.find(
+            (bus) => bus._id.toString() === registerId,
+        );
+        console.log([registerId, register.apiToken].join(','));
+    });
+}
+
 export async function run() {
-    await backupToJson();
+    await getRegisterTokens();
 }
