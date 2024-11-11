@@ -2,9 +2,25 @@ import TransactionRecord from '../../models/transactionRecord.js';
 import Shift from '../../models/shift.js';
 import { Types } from 'mongoose';
 import { parse } from 'csv-parse';
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream } from 'fs';
 const ObjectId = Types.ObjectId;
 import csvToJson from 'convert-csv-to-json';
+import { shiftsToBackUp } from './record/shiftsToBackUp.js';
+
+const writeEventStream = createWriteStream('shiftsBackupForFixShifts.json');
+
+function writeOneEventDoc(str) {
+    return new Promise((res, rej) => {
+        writeEventStream.write(str, (err) => {
+            if (err) {
+                console.log('err', err);
+                rej(err);
+            } else {
+                res();
+            }
+        });
+    });
+}
 
 async function getOrdersChangedByFixZReading() {
     return csvToJson
@@ -13,9 +29,25 @@ async function getOrdersChangedByFixZReading() {
         .getJsonFromCsv('src/scripts/backupData/record/ordersAffectShift20241024.csv');
 }
 
-async function backupToJson() {}
+async function backupToJson() {
+    let isFirst = true;
 
-async function backupToCsv(records) {
+    for (let i = 0; i < shiftsToBackUp.length; i++) {
+        const { business, shiftId } = shiftsToBackUp[i];
+
+        var prefix = isFirst ? '[' : ',';
+        if (isFirst) {
+            isFirst = false;
+        }
+        const shift = await Shift.findOne({ business, shiftId }).lean();
+        let docToReturn = prefix + JSON.stringify(shift);
+        await writeOneEventDoc(docToReturn);
+    }
+    await writeOneEventDoc(']');
+}
+
+async function backupToCsv() {
+    const records = await getOrdersChangedByFixZReading();
     for (let i = 0; i < records.length; i++) {
         const { business, transactionId, registerId } = records[i];
         const order = await TransactionRecord.findOne({
@@ -34,6 +66,5 @@ async function backupToCsv(records) {
 }
 
 export async function run() {
-    const records = await getOrdersChangedByFixZReading();
-    await backupToCsv(records);
+    await backupToJson();
 }
