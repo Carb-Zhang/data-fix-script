@@ -22,7 +22,9 @@ async function backupToCsv(records) {
         if (!order) {
             console.log([business, transactionId, receiptNumber, 'order not found'].join(','));
         } else {
-            console.log([business, transactionId, receiptNumber, order.createdTime].join(','));
+            console.log(
+                [business, transactionId, receiptNumber, order.createdTime.toISOString()].join(','),
+            );
         }
     }
 }
