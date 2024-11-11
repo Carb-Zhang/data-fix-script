@@ -19,7 +19,11 @@ async function backupToCsv(records) {
     for (let i = 0; i < records.length; i++) {
         const { business, transactionId, receiptNumber } = records[i];
         const order = await TransactionRecord.findOne({ business, receiptNumber }).lean();
-        console.log([business, transactionId, receiptNumber, order.createdTime].join(','));
+        if (!order) {
+            console.log([business, transactionId, receiptNumber, 'order not found'].join(','));
+        } else {
+            console.log([business, transactionId, receiptNumber, order.createdTime].join(','));
+        }
     }
 }
 
