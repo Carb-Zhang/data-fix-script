@@ -86,7 +86,11 @@ export async function getRegisterTokens() {
         const register = businessInfo.cashRegisters.find(
             (bus) => bus._id.toString() === registerId,
         );
-        console.log([registerId, register.apiToken].join(','));
+        if (!register) {
+            console.log([registerId, 'register not found'].join(','));
+        } else {
+            console.log([registerId, register.apiToken].join(','));
+        }
     });
 }
 
