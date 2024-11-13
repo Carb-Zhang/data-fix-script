@@ -21,6 +21,7 @@ function updateAccess(doc) {
 
 export async function run() {
     await Employee.find({
+        email: { $exists: true },
         backOfficeDetailAccesses: { $in: ['loyalty/cashback', 'loyalty/reports'] },
     })
         .cursor()
