@@ -101,6 +101,8 @@ const PickupStatus = {
 };
 
 export async function mock() {
+    const createdTime = new Date('2024-11-29T10:25:02.992+08:00');
+    const modifiedTime = new Date('2024-11-29T10:25:10.616+08:00');
     const orders = [
         ...Object.values(WebStoreStatus).map((status) => ({
             ...WEBSTORE_ORDER,
@@ -109,6 +111,8 @@ export async function mock() {
             transactionId: uuid.v4(),
             consumerId: 'MOCK_DATA',
             storeId: new ObjectId('674834be50d04500071dd443'),
+            createdTime,
+            modifiedTime,
         })),
         ...Object.values(DineInStatus).map((status) => ({
             ...DINEIN_ORDER,
@@ -119,6 +123,8 @@ export async function mock() {
             transactionId: uuid.v4(),
             consumerId: 'MOCK_DATA',
             storeId: new ObjectId('674834be50d04500071dd443'),
+            createdTime,
+            modifiedTime,
         })),
         ...Object.values(PickupStatus).map((status) => ({
             ...PICKUP_ORDER,
@@ -129,6 +135,8 @@ export async function mock() {
             transactionId: uuid.v4(),
             consumerId: 'MOCK_DATA',
             storeId: new ObjectId('674834be50d04500071dd443'),
+            createdTime,
+            modifiedTime,
         })),
         ...Object.values(TakeawayStatus).map((status) => ({
             ...TAKEAWAY_ORDER,
@@ -139,6 +147,8 @@ export async function mock() {
             transactionId: uuid.v4(),
             consumerId: 'MOCK_DATA',
             storeId: new ObjectId('674834be50d04500071dd443'),
+            createdTime,
+            modifiedTime,
         })),
         ...Object.values(DeliveryStatus).map((status) => ({
             ...DELIVERY_ORDER,
@@ -149,6 +159,8 @@ export async function mock() {
             transactionId: uuid.v4(),
             consumerId: 'MOCK_DATA',
             storeId: new ObjectId('674834be50d04500071dd443'),
+            createdTime,
+            modifiedTime,
         })),
     ];
     await OnlineTransaction.deleteMany({ consumerId: 'MOCK_DATA' });
