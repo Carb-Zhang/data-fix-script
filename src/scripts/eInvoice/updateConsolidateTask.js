@@ -29,7 +29,10 @@ export async function updateConsolidateTask() {
             createdAt: { $gt: new Date('2024-12-04T11:38:11.851+08:00') },
             'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
+        .select({ receiptNumbers: 1 })
         .lean();
+    console.log(requestRecords);
+
     const lastReceiptNumbers = requestRecords.map((receiptNumbers) => {
         return receiptNumbers[receiptNumbers.length - 1];
     });
