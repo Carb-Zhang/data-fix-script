@@ -26,7 +26,7 @@ export async function updateConsolidateTask() {
     const requestRecords = await EInvoiceRequestRecord.default
         .find({
             eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
-            createdAt: { $gt: ISODate('2024-12-04T11:38:11.851+08:00') },
+            createdAt: { $gt: new Date('2024-12-04T11:38:11.851+08:00') },
             'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
         .lean();
