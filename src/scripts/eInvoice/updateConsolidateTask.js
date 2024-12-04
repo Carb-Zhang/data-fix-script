@@ -1,0 +1,40 @@
+import TransactionRecord from '../../models/transactionRecord.js';
+import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
+import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
+
+const business = 'nxdistrosdnbhd';
+
+async function updateTask(receiptNumber) {
+    const order = await TransactionRecord.findOne({ business, receiptNumber }).lean();
+    const lastConsoledOrder = {
+        isOnline: false,
+        receiptNumber,
+        orderId: order._id.toString(),
+        createdTime: order.createdTime,
+        transactionType: order.transactionType,
+    };
+
+    console.log(lastConsoledOrder);
+    // await EInvoiceConsolidationTask.default.updateOne(
+    //     { storeId: order.storeId.toString(), month: '2024-12' },
+    //     { currentRunnerId: null, lastConsoledOrder },
+    // );
+}
+
+export async function updateConsolidateTask() {
+    // get all submit doc
+    const requestRecords = await EInvoiceRequestRecord.default
+        .find({
+            eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
+            createdAt: { $gt: ISODate('2024-12-04T11:38:11.851+08:00') },
+            'requestResult.eInvoiceStatus': 'SUBMITTED',
+        })
+        .lean();
+    const lastReceiptNumbers = requestRecords.map(
+        (receiptNumbers) => receiptNumbers[receiptNumbers.length - 1],
+    );
+    // update task
+    for (receiptNumber of lastReceiptNumbers) {
+        await updateTask(receiptNumber);
+    }
+}
