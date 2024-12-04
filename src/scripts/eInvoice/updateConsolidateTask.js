@@ -30,9 +30,9 @@ export async function updateConsolidateTask() {
             'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
         .lean();
-    const lastReceiptNumbers = requestRecords.map(
-        (receiptNumbers) => receiptNumbers[receiptNumbers.length - 1],
-    );
+    const lastReceiptNumbers = requestRecords.map((receiptNumbers) => {
+        return receiptNumbers[receiptNumbers.length - 1];
+    });
     console.log(lastReceiptNumbers);
     // update task
     for (const receiptNumber of lastReceiptNumbers) {
