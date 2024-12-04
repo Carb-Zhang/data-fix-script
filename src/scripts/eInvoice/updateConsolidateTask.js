@@ -33,7 +33,7 @@ export async function updateConsolidateTask() {
         .lean();
     console.log(requestRecords);
 
-    const lastReceiptNumbers = requestRecords.map((receiptNumbers) => {
+    const lastReceiptNumbers = requestRecords.map(({ receiptNumbers }) => {
         return receiptNumbers[receiptNumbers.length - 1];
     });
     console.log(lastReceiptNumbers);
