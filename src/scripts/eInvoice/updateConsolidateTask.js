@@ -34,7 +34,7 @@ export async function updateConsolidateTask() {
         (receiptNumbers) => receiptNumbers[receiptNumbers.length - 1],
     );
     // update task
-    for (receiptNumber of lastReceiptNumbers) {
+    for (const receiptNumber of lastReceiptNumbers) {
         await updateTask(receiptNumber);
     }
 }
