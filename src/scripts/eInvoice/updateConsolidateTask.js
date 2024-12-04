@@ -33,6 +33,7 @@ export async function updateConsolidateTask() {
     const lastReceiptNumbers = requestRecords.map(
         (receiptNumbers) => receiptNumbers[receiptNumbers.length - 1],
     );
+    console.log(lastReceiptNumbers);
     // update task
     for (const receiptNumber of lastReceiptNumbers) {
         await updateTask(receiptNumber);
