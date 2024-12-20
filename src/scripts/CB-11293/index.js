@@ -19,8 +19,8 @@ export async function fix(doc) {
 
 export async function run() {
     await Customer.find({
-        // business: 'starwise',
-        business: 'kafe123',
+        business: 'starwise',
+        // business: 'kafe123',
     })
         .sort({ _id: 1 })
         .select({ firstName: 1, lastName: 1 })
