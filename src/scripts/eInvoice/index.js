@@ -12,6 +12,6 @@ export async function run() {
     // console.log(time1, time2);
 
     // await finishDataFix();
-    await mockConsolidateOrderForTest();
+    await mockConsolidateOrderForTest(true);
     // await dataFixForPilotMerchants();
 }
