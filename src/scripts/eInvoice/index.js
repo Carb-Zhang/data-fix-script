@@ -1,5 +1,6 @@
 // import { resetOrdersEInvoiceInfo } from './resetOrdersEInvoiceInfo.js';
 import { finishDataFix } from './updateConsolidateTask.js';
+import { mockConsolidateOrderForTest } from './mockConsolidateOrderForTest.js';
 import { DateTime } from 'luxon';
 
 export async function run() {
@@ -9,5 +10,6 @@ export async function run() {
     // const time2 = DateTime.now().startOf('month').minus({ months: 1 }).toJSDate();
     // console.log(time1, time2);
 
-    await finishDataFix();
+    // await finishDataFix();
+    await mockConsolidateOrderForTest();
 }
