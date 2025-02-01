@@ -30,4 +30,6 @@ export async function run() {
     });
     console.log(storeIds);
     console.log('count', storeIds.length);
+    const taskStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', { month: '2025-02' });
+    console.log(_.difference(taskStoreIds, storeIds));
 }
