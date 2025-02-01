@@ -5,7 +5,7 @@ import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
 const business = 'kafe123';
 
 export async function mockConsolidateOrderForTest(isRevert) {
-    const receiptNumbers = ['0022501151903532', '853093906733432'];
+    const receiptNumbers = ['853549581012359'];
 
     const documentType = isRevert ? 'INVOICE' : 'CONSOLIDATE_INVOICE';
     const recordUpdateInfo = { $set: { eInvoiceDocumentType: documentType } };

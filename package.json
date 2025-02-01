@@ -18,7 +18,8 @@
         "luxon": "^3.5.0",
         "mongoose": "^7.5.2",
         "util": "^0.12.5",
-        "uuid": "^10.0.0"
+        "uuid": "^10.0.0",
+        "aws-sdk": "^2.1009.0"
     },
     "devDependencies": {
         "eslint": "^8.49.0"
