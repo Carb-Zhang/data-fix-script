@@ -11,6 +11,7 @@ export async function run() {
             'stores._id': 1,
             'stores.eInvoiceSetting.isEInvoiceReady': 1,
             'stores.eInvoiceSetting.isConsolidationOn': 1,
+            'stores.eInvoiceSetting.industry': 1,
         })
         .lean();
     const storeIds = [];
@@ -18,7 +19,8 @@ export async function run() {
         m.stores.forEach((s) => {
             if (
                 _.get(s, 'eInvoiceSetting.isEInvoiceReady') &&
-                _.get(s, 'eInvoiceSetting.isConsolidationOn')
+                _.get(s, 'eInvoiceSetting.isConsolidationOn') &&
+                ['LUXURY', 'OTHERS'].includes(_.get(s, 'eInvoiceSetting.industry'))
             ) {
                 storeIds.push(s._id.toString());
             }
