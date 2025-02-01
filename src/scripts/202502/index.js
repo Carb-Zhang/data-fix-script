@@ -9,6 +9,7 @@ export async function run() {
         .select({
             name: 1,
             'stores._id': 1,
+            'stores.isDeleted': 1,
             'stores.eInvoiceSetting.isEInvoiceReady': 1,
             'stores.eInvoiceSetting.isConsolidationOn': 1,
             'stores.eInvoiceSetting.industry': 1,
@@ -18,6 +19,7 @@ export async function run() {
     merchants.forEach((m) => {
         m.stores.forEach((s) => {
             if (
+                !s.isDeleted &&
                 _.get(s, 'eInvoiceSetting.isEInvoiceReady') &&
                 _.get(s, 'eInvoiceSetting.isConsolidationOn') &&
                 ['LUXURY', 'OTHERS'].includes(_.get(s, 'eInvoiceSetting.industry'))
