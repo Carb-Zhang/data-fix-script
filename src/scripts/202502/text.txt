@@ -1,0 +1,40 @@
+db.einvoicerequestrecords.find({
+    // "business" : "kolumpokopitiam",
+    'requestResult.eInvoiceStatus': 'REJECT',
+    "createdAt": { $gt: ISODate("2025-01-30T01:09:32.793+08:00") },
+    "requestType": { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] }
+})
+    .projection({ createdAt: 1, requestResult: 1, business: 1, 
+    'addOnRequestInfo.eInvoiceSettings.brn': 1, 'addOnRequestInfo.eInvoiceSettings.tin': 1,'addOnRequestInfo.eInvoiceSettings.displayBusinessName': 1,
+    })
+    .sort({ _id: -1 })
+    .limit(0)
+
+db.einvoiceconsolidationtasks.find({
+    "month": "2025-02",
+    "status": { $ne: "SUCCESS" }
+    // "status" : "IN_PROCESS",
+})
+    .projection({ business: 1 })
+    .sort({ _id: -1 })
+    .limit(0)
+
+db.einvoiceconsolidationtasks.distinct('storeId', {
+    "month": "2025-02",
+    // "status": { $ne: "SUCCESS" }
+    // "status" : "IN_PROCESS",
+})
+
+db.businesses.find({
+    name: {
+        $in: ["9yardscafebistro",
+            "khallegacytrading",
+            "kolumpokopitiam",
+            "pastrikafe",
+            "sinarilmu",
+            "superkitchen",
+            "supketaq",]
+    }
+}).projection({ 'stores.eInvoiceSetting.isConsolidationOn': 1,name: 1 })
+
+db.einvoiceconsolidationtasks.count({ "month": "2025-02", })
