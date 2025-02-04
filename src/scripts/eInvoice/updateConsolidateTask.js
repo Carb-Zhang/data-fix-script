@@ -105,7 +105,7 @@ export async function checkTasks() {
             business,
             eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
             createdAt: { $gt: new Date(`${MONTH}-01T11:38:11.851+08:00`) },
-            'requestResult.eInvoiceStatus': 'SUBMITTED',
+            // 'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
         .select({ receiptNumbers: 1 })
         .lean();
