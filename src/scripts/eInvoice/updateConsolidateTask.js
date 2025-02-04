@@ -3,6 +3,7 @@ import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
 import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
 
 const business = 'nxdistrosdnbhd';
+const MONTH = '2025-02';
 
 async function updateTask(receiptNumber) {
     const order = await TransactionRecord.findOne({ business, receiptNumber }).lean();
@@ -16,7 +17,7 @@ async function updateTask(receiptNumber) {
 
     console.log(lastConsoledOrder);
     await EInvoiceConsolidationTask.default.updateOne(
-        { storeId: order.storeId.toString(), month: '2024-12' },
+        { storeId: order.storeId.toString(), month: MONTH },
         { currentRunnerId: null, lastConsoledOrder },
     );
 }
@@ -25,13 +26,13 @@ export async function updateConsolidateTask() {
     // get all submit doc
     const requestRecords = await EInvoiceRequestRecord.default
         .find({
+            business,
             eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
-            createdAt: { $gt: new Date('2024-12-04T11:38:11.851+08:00') },
+            createdAt: { $gt: new Date(`${MONTH}-01T11:38:11.851+08:00`) },
             'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
         .select({ receiptNumbers: 1 })
         .lean();
-    console.log(requestRecords);
 
     const lastReceiptNumbers = requestRecords.map(({ receiptNumbers }) => {
         return receiptNumbers[receiptNumbers.length - 1];
@@ -97,14 +98,13 @@ export async function finishDataFix() {
     }
 }
 
-
 export async function checkTasks() {
     // get all submit doc
     const requestRecords = await EInvoiceRequestRecord.default
         .find({
             business,
             eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
-            createdAt: { $gt: new Date('2025-02-01T11:38:11.851+08:00') },
+            createdAt: { $gt: new Date(`${MONTH}-01T11:38:11.851+08:00`) },
             'requestResult.eInvoiceStatus': 'SUBMITTED',
         })
         .select({ receiptNumbers: 1 })
