@@ -11,9 +11,9 @@ export async function run() {
     // const time2 = DateTime.now().startOf('month').minus({ months: 1 }).toJSDate();
     // console.log(time1, time2);
 
-    // await finishDataFix();
+    await finishDataFix();
     // await mockConsolidateOrderForTest(true);
     // await dataFixForPilotMerchants();
     // await updateConsolidateTask();
-    await checkTasks();
+    // await checkTasks();
 }

@@ -2,7 +2,7 @@ import TransactionRecord from '../../models/transactionRecord.js';
 import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
 import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
 
-const business = 'superkitchen';
+const business = 'nxdistrosdnbhd';
 const MONTH = '2025-02';
 
 async function updateTask(receiptNumber) {
@@ -46,24 +46,16 @@ export async function updateConsolidateTask() {
 
 const documentLongIdsToUpdate = [
     {
-        docId: '2N15DRF3QBDZ9SXPJXA9F8EJ10',
-        documentLongId: 'A0PRTNJQMF8Z1VBENXA9F8EJ10Ztfnbn1733303774',
+        docId: '0B9QMDQMFH3JX1B21X7S71KJ10',
+        documentLongId: 'HQF7QPVZRSPFQPHN4X7S71KJ10BS10ts1738429734',
     },
     {
-        docId: 'AMWYHGPSB55ZE2DV56T4F8EJ10',
-        documentLongId: 'FV09MA1XW157Y1QM76T4F8EJ10FDYzMN1733303625',
+        docId: '6WK4RABGE2P5V1E44F8S71KJ10',
+        documentLongId: '7CECFPZJD2PSS60Z6F8S71KJ10BIHRhv1738429735',
     },
     {
-        docId: 'FY2X8B4PEG6D1ZWB86T4F8EJ10',
-        documentLongId: 'VHR7VYGDJGS9E1GEB6T4F8EJ107z4ged1733303625',
-    },
-    {
-        docId: 'H28WWMAA0G7E1S0KQ4G9F8EJ10',
-        documentLongId: '2NSPGFFH1M3ZCYQ9R4G9F8EJ10eYWfjk1733303779',
-    },
-    {
-        docId: 'Q56QBYQEZVSGTZMJ7259F8EJ10',
-        documentLongId: 'C2JK5WPDHX05FFFP9259F8EJ10uK9E1P1733303768',
+        docId: '0J8FZ4V44C1ZNJMN3W7S71KJ10',
+        documentLongId: 'A6TA10CJ78J69SD44W7S71KJ100losoL1738429734',
     },
 ];
 
