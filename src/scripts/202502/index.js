@@ -2,7 +2,7 @@ import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js
 import Business from '../../models/business.js';
 import _ from 'lodash';
 
-export async function run() {
+export async function test() {
     const merchants = await Business.find({
         isEInvoiceEnabled: true,
     })
@@ -34,4 +34,12 @@ export async function run() {
         month: '2025-02',
     });
     console.log(_.difference(taskStoreIds, storeIds));
+}
+
+export async function run() {
+    const tasks = await EInvoiceConsolidationTask.default.find({
+        month: '2025-02',
+        status: 'IN_PROCESS',
+    });
+    console.log(tasks);
 }
