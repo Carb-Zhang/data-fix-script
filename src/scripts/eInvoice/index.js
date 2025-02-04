@@ -14,6 +14,6 @@ export async function run() {
     // await finishDataFix();
     // await mockConsolidateOrderForTest(true);
     // await dataFixForPilotMerchants();
-    await updateConsolidateTask();
-    // await checkTasks();
+    // await updateConsolidateTask();
+    await checkTasks();
 }
