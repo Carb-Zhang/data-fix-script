@@ -16,10 +16,10 @@ async function updateTask(receiptNumber) {
     };
 
     console.log(lastConsoledOrder);
-    // await EInvoiceConsolidationTask.default.updateOne(
-    //     { storeId: order.storeId.toString(), month: MONTH },
-    //     { currentRunnerId: null, lastConsoledOrder },
-    // );
+    await EInvoiceConsolidationTask.default.updateOne(
+        { storeId: order.storeId.toString(), month: MONTH },
+        { currentRunnerId: null, lastConsoledOrder },
+    );
 }
 
 export async function updateConsolidateTask() {
