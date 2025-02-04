@@ -3,6 +3,9 @@ import Business from '../../models/business.js';
 import _ from 'lodash';
 
 async function test() {
+    const taskStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', {
+        month: '2025-02',
+    });
     const merchants = await Business.find({
         isEInvoiceEnabled: true,
     })
@@ -34,9 +37,7 @@ async function test() {
     });
     // console.log(storeIds);
     console.log('count', storeIds.length);
-    const taskStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', {
-        month: '2025-02',
-    });
+
     console.log(_.difference(storeIds, taskStoreIds));
     console.log(businessNames);
 }
