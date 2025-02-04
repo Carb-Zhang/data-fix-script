@@ -26,7 +26,7 @@ async function test() {
                 ['LUXURY', 'OTHERS'].includes(_.get(s, 'eInvoiceSetting.industry'))
             ) {
                 storeIds.push(s._id.toString());
-                if (!businessNames.includes(m.name)) {
+                if (!businessNames.includes(m.name) && !taskStoreIds.includes(s._id.toString())) {
                     businessNames.push(m.name);
                 }
             }
