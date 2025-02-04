@@ -96,3 +96,30 @@ export async function finishDataFix() {
         console.log(res2);
     }
 }
+
+
+export async function checkTasks() {
+    // get all submit doc
+    const requestRecords = await EInvoiceRequestRecord.default
+        .find({
+            business,
+            eInvoiceDocumentType: { $in: ['CONSOLIDATE_INVOICE', 'CONSOLIDATE_REFUND'] },
+            createdAt: { $gt: new Date('2025-02-01T11:38:11.851+08:00') },
+            'requestResult.eInvoiceStatus': 'SUBMITTED',
+        })
+        .select({ receiptNumbers: 1 })
+        .lean();
+
+    const lastReceiptNumbers = requestRecords.map(({ receiptNumbers }) => {
+        return receiptNumbers[receiptNumbers.length - 1];
+    });
+
+    for (const receiptNumber of lastReceiptNumbers) {
+        const order = await TransactionRecord.findOne({ business, receiptNumber })
+            .select({
+                eInvoiceInfo: 1,
+            })
+            .lean();
+        console.log(order);
+    }
+}

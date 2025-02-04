@@ -1,5 +1,5 @@
 // import { resetOrdersEInvoiceInfo } from './resetOrdersEInvoiceInfo.js';
-import { finishDataFix } from './updateConsolidateTask.js';
+import { finishDataFix, updateConsolidateTask, checkTasks } from './updateConsolidateTask.js';
 import { mockConsolidateOrderForTest } from './mockConsolidateOrderForTest.js';
 import { dataFixForPilotMerchants } from './dataFixForPilotMerchants.js';
 import { DateTime } from 'luxon';
@@ -12,6 +12,8 @@ export async function run() {
     // console.log(time1, time2);
 
     // await finishDataFix();
-    await mockConsolidateOrderForTest(true);
+    // await mockConsolidateOrderForTest(true);
     // await dataFixForPilotMerchants();
+    // await updateConsolidateTask();
+    await checkTasks();
 }
