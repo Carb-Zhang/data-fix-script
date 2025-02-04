@@ -16,6 +16,7 @@ async function test() {
         })
         .lean();
     const storeIds = [];
+    const businessNames = [];
     merchants.forEach((m) => {
         m.stores.forEach((s) => {
             if (
@@ -25,6 +26,9 @@ async function test() {
                 ['LUXURY', 'OTHERS'].includes(_.get(s, 'eInvoiceSetting.industry'))
             ) {
                 storeIds.push(s._id.toString());
+                if (!businessNames.includes(m.name)) {
+                    businessNames.push(m.name);
+                }
             }
         });
     });
@@ -34,6 +38,7 @@ async function test() {
         month: '2025-02',
     });
     console.log(_.difference(storeIds, taskStoreIds));
+    console.log(businessNames);
 }
 
 export async function run() {
