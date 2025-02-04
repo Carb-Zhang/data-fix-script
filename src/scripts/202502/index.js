@@ -33,14 +33,14 @@ async function test() {
     const taskStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', {
         month: '2025-02',
     });
-    console.log(_.difference(taskStoreIds, storeIds));
+    console.log(_.difference(storeIds, taskStoreIds));
 }
 
 export async function run() {
-    const tasks = await EInvoiceConsolidationTask.default.find({
-        month: '2025-02',
-        status: 'IN_PROCESS',
-    });
-    console.log(tasks);
+    // const tasks = await EInvoiceConsolidationTask.default.find({
+    //     month: '2025-02',
+    //     status: 'IN_PROCESS',
+    // });
+    // console.log(tasks);
     await test();
 }
