@@ -14,11 +14,12 @@ export async function run() {
         .minus({ months: 1 })
         .toJSDate();
     const lastMonthEnd = DateTime.now().setZone('UTC+8').startOf('month').toJSDate();
-    const eInvoiceRecords = await EInvoiceRequestRecord.default.find({
-        business: 'bigappledonuts',
-        storeId: '67568ad3d4c3e50007e83061',
-        requestType: { $in: ['CONSOLIDATE_INVOICE'] },
-    })
+    const eInvoiceRecords = await EInvoiceRequestRecord.default
+        .find({
+            business: 'bigappledonuts',
+            storeId: '67568ad3d4c3e50007e83061',
+            requestType: { $in: ['CONSOLIDATE_INVOICE'] },
+        })
         .lean()
         .select({ receiptNumbers: 1 });
     const receiptNumbersWithEInvoice = [];
@@ -38,7 +39,7 @@ export async function run() {
         .cursor()
         .addCursorFlag('noCursorTimeout', true)
         .eachAsync((order) => {
-            if (receiptNumbersWithEInvoice.includes(order.receiptNumber)) {
+            if (!receiptNumbersWithEInvoice.includes(order.receiptNumber)) {
                 console.log(order.receiptNumber);
             }
         });
