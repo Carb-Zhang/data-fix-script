@@ -68,6 +68,7 @@ export async function run2() {
     const targetStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', {
         business,
     });
+    let count = 0;
 
     await TransactionRecord.find({
         business,
@@ -86,12 +87,15 @@ export async function run2() {
         .eachAsync((order) => {
             if (
                 targetStoreIds.includes(order.storeId.toString()) &&
-                _.get(order, 'eInvoiceInfo.documentType') !== 'CONSOLIDATE_INVOICE'
+                !_.get(order, 'eInvoiceInfo.documentType')
             ) {
-                console.log(order.receiptNumber);
+                // console.log(order.receiptNumber);
+                count++;
             }
             // console.log(order.receiptNumber);
         });
+
+    console.log(count);
 }
 
 const commonFieldsForZreading = {
