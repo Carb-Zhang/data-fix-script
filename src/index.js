@@ -9,7 +9,7 @@ async function runScript(scriptName) {
 }
 
 async function main() {
-    await connectMongoDB();
+    // await connectMongoDB();
     console.log(new Date().toISOString(), 'Start');
 
     if (process.argv[2]) {
