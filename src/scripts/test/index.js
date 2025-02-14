@@ -70,7 +70,7 @@ export async function run2() {
             $gte: lastMonthBegin,
             $lt: lastMonthEnd,
         },
-        receiptNumber: { $in: receiptNumbersWithEInvoice },
+        // receiptNumber: { $in: receiptNumbersWithEInvoice },
         isCancelled: { $ne: true },
     })
         .sort({ createdTime: 1 })
@@ -79,7 +79,10 @@ export async function run2() {
         .cursor()
         .addCursorFlag('noCursorTimeout', true)
         .eachAsync((order) => {
-            console.log(order.receiptNumber);
+            if (_.get(order, 'eInvoiceInfo.documentType') !== 'CONSOLIDATE_INVOICE') {
+                console.log(order.receiptNumber);
+            }
+            // console.log(order.receiptNumber);
         });
 }
 
