@@ -117,6 +117,42 @@ async function mockData() {
     );
 }
 
+async function checkMissedOrderForMonth(month) {
+    const monthBegin = DateTime.fromISO(`${month}-15T00:00:00.000`)
+        .setZone('UTC+8')
+        .startOf('month')
+        .toJSDate();
+    const monthEnd = DateTime.fromJSDate(monthBegin).setZone('UTC+8').endOf('month').toJSDate();
+    const nextMonth = DateTime.fromJSDate(monthEnd)
+        .setZone('UTC+8')
+        .plus({ days: 1 })
+        .toFormat('yyyy-MM');
+
+    const tasks = await EInvoiceConsolidationTask.default
+        .find({ month: nextMonth, status: 'SUCCESS', business: { $ne: 'bigappledonuts' } })
+        .lean();
+
+    console.log(['business', 'storeId', 'receiptNumber'].join(','));
+
+    for (const task of tasks) {
+        const orders = await TransactionRecord.find({
+            business: task.business,
+            storeId: task.storeId,
+            createdTime: {
+                $gte: monthBegin,
+                $lt: monthEnd,
+            },
+            isCancelled: { $ne: true },
+            'eInvoiceInfo.documentType': { $exists: false },
+        })
+            .select({ receiptNumber: 1 })
+            .lean();
+        for (const order of orders) {
+            console.log([task.business, task.storeId, order.receiptNumber].join(','));
+        }
+    }
+}
+
 export async function run() {
-    await run2();
+    await checkMissedOrderForMonth('2025-01');
 }
