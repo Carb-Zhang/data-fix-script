@@ -1,6 +1,7 @@
 import Stocktake from '../../models/stockTake.js';
 import Product from '../../models/product.js';
 import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
+import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
 import TransactionRecord from '../../models/transactionRecord.js';
 import _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -54,15 +55,19 @@ export async function run2() {
         .minus({ months: 1 })
         .toJSDate();
     const lastMonthEnd = DateTime.now().setZone('UTC+8').startOf('month').toJSDate();
-    const eInvoiceRecords = await EInvoiceRequestRecord.default
-        .find({
-            business: 'bigappledonuts',
-            requestType: { $in: ['REQUEST_INVOICE'] },
-        })
-        .lean()
-        .select({ receiptNumbers: 1 });
-    const receiptNumbersWithEInvoice = [];
-    eInvoiceRecords.forEach((doc) => receiptNumbersWithEInvoice.push(...doc.receiptNumbers));
+    // const eInvoiceRecords = await EInvoiceRequestRecord.default
+    //     .find({
+    //         business,
+    //         requestType: { $in: ['REQUEST_INVOICE'] },
+    //     })
+    //     .lean()
+    //     .select({ receiptNumbers: 1 });
+    // const receiptNumbersWithEInvoice = [];
+    // eInvoiceRecords.forEach((doc) => receiptNumbersWithEInvoice.push(...doc.receiptNumbers));
+
+    const targetStoreIds = await EInvoiceConsolidationTask.default.distinct('storeId', {
+        business,
+    });
 
     await TransactionRecord.find({
         business,
@@ -74,12 +79,15 @@ export async function run2() {
         isCancelled: { $ne: true },
     })
         .sort({ createdTime: 1 })
-        .select({ receiptNumber: 1, eInvoiceInfo: 1 })
+        .select({ receiptNumber: 1, eInvoiceInfo: 1, storeId: 1 })
         .lean()
         .cursor()
         .addCursorFlag('noCursorTimeout', true)
         .eachAsync((order) => {
-            if (_.get(order, 'eInvoiceInfo.documentType') !== 'CONSOLIDATE_INVOICE') {
+            if (
+                targetStoreIds.includes(order.storeId.toString()) &&
+                _.get(order, 'eInvoiceInfo.documentType') !== 'CONSOLIDATE_INVOICE'
+            ) {
                 console.log(order.receiptNumber);
             }
             // console.log(order.receiptNumber);
