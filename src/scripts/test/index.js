@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { Types } from 'mongoose';
 import ZReadingModel from '../../models/zReading.js';
+import { parseCsv } from '../../utils/index.js';
 
 export async function run1() {
     const business = 'bigappledonuts';
@@ -153,6 +154,27 @@ async function checkMissedOrderForMonth(month) {
     }
 }
 
+async function testTemp(month) {
+    const orders = await parseCsv('src/scripts/test/1.csv');
+    // group the orders by busiess and storeId
+    const groupedOrders = _.groupBy(orders, (order) => `${order.business},${order.storeId}`);
+    for (const key in groupedOrders) {
+        const [business, storeId] = key.split(',');
+        const returnOrders = await TransactionRecord.find({
+            business,
+            storeId,
+            receiptNumber: { $in: groupedOrders[key].map((order) => order.receiptNumber) },
+            transactionType: 'Return',
+        })
+            .select({ receiptNumber: 1, transactionType: 1 })
+            .lean();
+        for (const returnOrder of returnOrders) {
+            console.log([business, storeId, returnOrder.receiptNumber].join(','));
+        }
+    }
+}
+
 export async function run() {
-    await checkMissedOrderForMonth('2025-01');
+    // await checkMissedOrderForMonth('2025-01');
+    await testTemp();
 }
