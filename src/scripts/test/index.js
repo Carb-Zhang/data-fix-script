@@ -184,7 +184,19 @@ async function testLargeAggr(businessName) {
     };
 
     var aggregationQuery = TransactionRecord.aggregate([{ $match }]);
-
+    // var aggregationQuery = await TransactionRecord.aggregate([
+    //     { $match },
+    //     { $sort: { createdTime: 1 } },
+    //     { $project: { customerId: 1, items: 1 } },
+    //     { $unwind: '$items' },
+    //     {
+    //         $group: {
+    //             _id: null,
+    //             customerIds: { $addToSet: '$customerId' },
+    //             productIds: { $addToSet: '$items.productId' },
+    //         },
+    //     },
+    // ]);
     aggregationQuery.sort('createdTime');
     aggregationQuery
         .project({ customerId: 1, items: 1 })
@@ -205,6 +217,7 @@ async function testLargeAggr(businessName) {
 
 export async function run() {
     // await checkMissedOrderForMonth('2025-01');
-    await testLargeAggr('bigappledonuts');
+    // await testLargeAggr('bigappledonuts');
+    await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
 }
