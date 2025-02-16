@@ -174,7 +174,37 @@ async function testTemp(month) {
     }
 }
 
+async function testLargeAggr(businessName) {
+    const $match = {
+        business: businessName,
+        createdTime: {
+            $gte: new Date('2024-07-04T11:00:27.884+08:00'),
+            $lt: new Date('2025-07-04T11:00:27.884+08:00'),
+        },
+    };
+
+    var aggregationQuery = TransactionRecord.aggregate([{ $match }]);
+
+    aggregationQuery.sort('createdTime');
+    aggregationQuery
+        .project({ customerId: 1, items: 1 })
+        .unwind('items')
+        .group({
+            _id: null,
+            customerIds: { $addToSet: '$customerId' },
+            productIds: { $addToSet: '$items.productId' },
+        });
+
+    console.log('start', new Date());
+    const count = await TransactionRecord.count($match);
+    const result = await aggregationQuery.exec();
+
+    console.log(count, result[0].productIds.length);
+    console.log('end', new Date());
+}
+
 export async function run() {
     // await checkMissedOrderForMonth('2025-01');
-    await testTemp();
+    await testLargeAggr('bigappledonuts');
+    // await testLargeAggr('onlytestaccount');
 }
