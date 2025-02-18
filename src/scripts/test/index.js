@@ -236,7 +236,6 @@ async function testRealMiss() {
             const eInvoice = await EInvoiceRequestRecord.default
                 .find({
                     business,
-                    storeId,
                     receiptNumbers: receiptNumber,
                     'requestResult.eInvoiceStatus': {
                         $in: [EInvoiceStatus.CANCEL, EInvoiceStatus.VALID],
