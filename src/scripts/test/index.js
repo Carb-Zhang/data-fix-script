@@ -119,21 +119,28 @@ async function mockData() {
 }
 
 async function checkMissedOrderForMonth(month) {
-    const monthBegin = DateTime.fromISO(`${month}-15T00:00:00.000`)
-        .setZone('UTC+8')
+    const monthBegin = DateTime.fromFormat(month, 'yyyy-MM', { zone: 'UTC+8' })
         .startOf('month')
         .toJSDate();
-    const monthEnd = DateTime.fromJSDate(monthBegin).setZone('UTC+8').endOf('month').toJSDate();
-    const nextMonth = DateTime.fromJSDate(monthEnd)
-        .setZone('UTC+8')
+    const monthEnd = DateTime.fromFormat(month, 'yyyy-MM', { zone: 'UTC+8' })
+        .endOf('month')
+        .toJSDate();
+    const nextMonth = DateTime.fromJSDate(monthEnd, { zone: 'UTC+8' })
         .plus({ days: 1 })
         .toFormat('yyyy-MM');
 
     const tasks = await EInvoiceConsolidationTask.default
-        .find({ month: nextMonth, status: 'SUCCESS', business: { $ne: 'bigappledonuts' } })
+        .find({ month: nextMonth, status: 'SUCCESS' })
         .lean();
 
     console.log(['business', 'storeId', 'receiptNumber'].join(','));
+
+    const EInvoiceStatus = {
+        REJECT: 'REJECT',
+        SUBMITTED: 'SUBMITTED',
+        VALID: 'VALID',
+        CANCEL: 'CANCEL',
+    };
 
     for (const task of tasks) {
         const orders = await TransactionRecord.find({
@@ -144,7 +151,10 @@ async function checkMissedOrderForMonth(month) {
                 $lt: monthEnd,
             },
             isCancelled: { $ne: true },
-            'eInvoiceInfo.documentType': { $exists: false },
+            // 'eInvoiceInfo.documentType': { $exists: false },
+            'eInvoiceInfo.eInvoiceStatus': {
+                $nin: [EInvoiceStatus.VALID, EInvoiceStatus.SUBMITTED, EInvoiceStatus.CANCEL],
+            },
         })
             .select({ receiptNumber: 1 })
             .lean();
@@ -216,8 +226,8 @@ async function testLargeAggr(businessName) {
 }
 
 export async function run() {
-    // await checkMissedOrderForMonth('2025-01');
+    await checkMissedOrderForMonth('2025-01');
     // await testLargeAggr('bigappledonuts');
-    await testLargeAggr('thesafehouse');
+    // await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
 }
