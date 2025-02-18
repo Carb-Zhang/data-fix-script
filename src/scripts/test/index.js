@@ -302,10 +302,14 @@ async function testLargeAggr(businessName) {
 }
 
 async function checkFinishFix() {
-    const records = await EInvoiceRequestRecord.default.find({
-        requestType: { $in: ['CONSOLIDATE_INVOICE'] },
-        createdAt: { $gt: new Date('2025-02-10T22:26:44.428+08:00') },
-    })
+    const records = await EInvoiceRequestRecord.default
+        .find({
+            requestType: { $in: ['CONSOLIDATE_INVOICE'] },
+            createdAt: { $gt: new Date('2025-02-10T22:26:44.428+08:00') },
+            'requestResult.eInvoiceStatus': {
+                $in: [EInvoiceStatus.VALID],
+            },
+        })
         .lean()
         .select({ receiptNumbers: 1 });
     let count = 0;
