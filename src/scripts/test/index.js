@@ -3,6 +3,7 @@ import Product from '../../models/product.js';
 import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
 import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
 import TransactionRecord from '../../models/transactionRecord.js';
+import OnlineTransaction from '../../models/onlineTransaction.js';
 import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { Types } from 'mongoose';
@@ -125,6 +126,46 @@ const EInvoiceStatus = {
     CANCEL: 'CANCEL',
 };
 
+const TransactionType = {
+    Sale: 'Sale',
+    Return: 'Return',
+};
+
+const TransactionChannel = {
+    WebStore: 1,
+    Beep: 3,
+};
+
+const OnlineOrderShippingType = {
+    DELIVERY: 'delivery',
+    PICKUP: 'pickup',
+    DIGITAL: 'digital',
+    TAKEAWAY: 'takeaway',
+    DINE_IN: 'dineIn',
+};
+
+const OnlineOrderPaymentMethod = {
+    ONLINE: 'Online',
+    OFFLINE: 'Offline',
+};
+const OnlineOrderStatus = {
+    CREATED: 'created',
+    PENDING_PAYMENT: 'pendingPayment',
+    PENDING_VERIFICATION: 'pendingVerification',
+    PAID: 'paid',
+    PAYMENT_CANCELLED: 'paymentCancelled',
+    READY_FOR_DELIVERY: 'readyForDelivery',
+    READY_FOR_PICKUP: 'readyForPickup',
+    SHIPPED: 'shipped',
+    PICKED_UP: 'pickedUp',
+    CANCELLED: 'cancelled',
+    FAILED: 'failed',
+    CONFIRMED: 'confirmed',
+    LOGISTICS_CONFIRMED: 'logisticsConfirmed',
+    ACCEPTED: 'accepted',
+    DELIVERED: 'delivered',
+};
+
 async function checkMissedOrderForMonth(month) {
     const monthBegin = DateTime.fromFormat(month, 'yyyy-MM', { zone: 'UTC+8' })
         .startOf('month')
@@ -140,26 +181,52 @@ async function checkMissedOrderForMonth(month) {
         .find({ month: nextMonth, status: 'SUCCESS' })
         .lean();
 
-    console.log(['business', 'storeId', 'receiptNumber'].join(','));
+    console.log(['business', 'storeId', 'receiptNumber', 'isOnline'].join(','));
 
     for (const task of tasks) {
-        const orders = await TransactionRecord.find({
-            business: task.business,
-            storeId: task.storeId,
+        const commonFilter = {
+            business,
+            storeId,
             createdTime: {
                 $gte: monthBegin,
                 $lt: monthEnd,
             },
-            isCancelled: { $ne: true },
-            // 'eInvoiceInfo.documentType': { $exists: false },
             'eInvoiceInfo.eInvoiceStatus': {
                 $nin: [EInvoiceStatus.VALID, EInvoiceStatus.SUBMITTED, EInvoiceStatus.CANCEL],
             },
+            isCancelled: { $ne: true },
+        };
+
+        const offlineOrders = await TransactionRecord.find({
+            ...commonFilter,
+            transactionType: { $in: [TransactionType.Return, TransactionType.Sale] },
         })
             .select({ receiptNumber: 1 })
             .lean();
-        for (const order of orders) {
-            console.log([task.business, task.storeId, order.receiptNumber].join(','));
+        for (const order of offlineOrders) {
+            console.log([task.business, task.storeId, order.receiptNumber, false].join(','));
+        }
+
+        const onlineOrders = await OnlineTransaction.find({
+            ...commonFilter,
+            channel: { $in: [TransactionChannel.WebStore, TransactionChannel.Beep] },
+            shippingType: { $ne: OnlineOrderShippingType.DIGITAL },
+            status: {
+                $nin: [
+                    OnlineOrderStatus.CREATED,
+                    OnlineOrderStatus.PENDING_PAYMENT,
+                    OnlineOrderStatus.PENDING_VERIFICATION,
+                    OnlineOrderStatus.PAYMENT_CANCELLED,
+                    OnlineOrderStatus.CANCELLED,
+                    OnlineOrderStatus.FAILED,
+                ],
+            },
+            paymentMethod: OnlineOrderPaymentMethod.OFFLINE,
+        })
+            .select({ receiptNumber: 1 })
+            .lean();
+        for (const order of onlineOrders) {
+            console.log([task.business, task.storeId, order.receiptNumber, true].join(','));
         }
     }
 }
@@ -251,8 +318,8 @@ async function testRealMiss() {
 }
 
 export async function run() {
-    // await checkMissedOrderForMonth('2025-01');
-    await testRealMiss();
+    await checkMissedOrderForMonth('2025-01');
+    // await testRealMiss();
     // await testLargeAggr('bigappledonuts');
     // await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
