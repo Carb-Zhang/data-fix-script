@@ -118,6 +118,13 @@ async function mockData() {
     );
 }
 
+const EInvoiceStatus = {
+    REJECT: 'REJECT',
+    SUBMITTED: 'SUBMITTED',
+    VALID: 'VALID',
+    CANCEL: 'CANCEL',
+};
+
 async function checkMissedOrderForMonth(month) {
     const monthBegin = DateTime.fromFormat(month, 'yyyy-MM', { zone: 'UTC+8' })
         .startOf('month')
@@ -134,13 +141,6 @@ async function checkMissedOrderForMonth(month) {
         .lean();
 
     console.log(['business', 'storeId', 'receiptNumber'].join(','));
-
-    const EInvoiceStatus = {
-        REJECT: 'REJECT',
-        SUBMITTED: 'SUBMITTED',
-        VALID: 'VALID',
-        CANCEL: 'CANCEL',
-    };
 
     for (const task of tasks) {
         const orders = await TransactionRecord.find({
@@ -225,8 +225,35 @@ async function testLargeAggr(businessName) {
     console.log('end', new Date());
 }
 
+async function testRealMiss() {
+    const orders = await parseCsv('src/scripts/test/missedConsolidateOrders.csv');
+    // group the orders by busiess and storeId
+    const groupedOrders = _.groupBy(orders, (order) => `${order.business},${order.storeId}`);
+    for (const key in groupedOrders) {
+        const [business, storeId] = key.split(',');
+        const receiptNumbers = groupedOrders[key].map((order) => order.receiptNumber);
+        for (const receiptNumber in receiptNumbers) {
+            const eInvoice = await EInvoiceRequestRecord.default
+                .find({
+                    business,
+                    storeId,
+                    receiptNumbers: receiptNumber,
+                    'requestResult.eInvoiceStatus': {
+                        $in: [EInvoiceStatus.CANCEL, EInvoiceStatus.VALID],
+                    },
+                })
+                .lean()
+                .select({ _id: 1 });
+            if (eInvoice[0]) {
+                console.log(receiptNumber);
+            }
+        }
+    }
+}
+
 export async function run() {
-    await checkMissedOrderForMonth('2025-01');
+    // await checkMissedOrderForMonth('2025-01');
+    await testRealMiss();
     // await testLargeAggr('bigappledonuts');
     // await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
