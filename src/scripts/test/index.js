@@ -301,8 +301,21 @@ async function testLargeAggr(businessName) {
     console.log('end', new Date());
 }
 
+async function checkFinishFix() {
+    const records = await EInvoiceRequestRecord.default.find({
+        requestType: { $in: ['CONSOLIDATE_INVOICE'] },
+        createdAt: { $gt: new Date('2025-02-10T22:26:44.428+08:00') },
+    })
+        .lean()
+        .select({ receiptNumbers: 1 });
+    let count = 0;
+    records.forEach((r) => (count += r.receiptNumbers.length));
+    console.log('total', count);
+}
+
 export async function run() {
-    await checkMissedOrderForMonth('2025-01');
+    // await checkMissedOrderForMonth('2025-01');
+    await checkFinishFix();
     // await testRealMiss();
     // await testLargeAggr('bigappledonuts');
     // await testLargeAggr('thesafehouse');
