@@ -166,6 +166,25 @@ const OnlineOrderStatus = {
     DELIVERED: 'delivered',
 };
 
+async function testRealMiss(business, receiptNumber) {
+    // const orders = await parseCsv('src/scripts/test/missedConsolidateOrders.csv');
+    // group the orders by busiess and storeId
+    // const groupedOrders = _.groupBy(orders, (order) => `${order.business},${order.storeId}`);
+    const eInvoice = await EInvoiceRequestRecord.default
+        .find({
+            business,
+            receiptNumbers: receiptNumber,
+            'requestResult.eInvoiceStatus': {
+                $in: [EInvoiceStatus.CANCEL, EInvoiceStatus.VALID],
+            },
+        })
+        .lean()
+        .select({ _id: 1 });
+    if (eInvoice[0]) {
+        console.log(receiptNumber, 'not real miss');
+    }
+}
+
 async function checkMissedOrderForMonth(month) {
     const monthBegin = DateTime.fromFormat(month, 'yyyy-MM', { zone: 'UTC+8' })
         .startOf('month')
@@ -181,12 +200,12 @@ async function checkMissedOrderForMonth(month) {
         .find({ month: nextMonth, status: 'SUCCESS' })
         .lean();
 
-    console.log(['business', 'storeId', 'receiptNumber', 'isOnline'].join(','));
+    console.log(['business', 'storeId', 'receiptNumber', 'isOnline', 'transactionType'].join(','));
 
     for (const task of tasks) {
         const commonFilter = {
-            business,
-            storeId,
+            business: task.business,
+            storeId: task.storeId,
             createdTime: {
                 $gte: monthBegin,
                 $lt: monthEnd,
@@ -201,10 +220,19 @@ async function checkMissedOrderForMonth(month) {
             ...commonFilter,
             transactionType: { $in: [TransactionType.Return, TransactionType.Sale] },
         })
-            .select({ receiptNumber: 1 })
+            .select({ receiptNumber: 1, transactionType: 1 })
             .lean();
         for (const order of offlineOrders) {
-            console.log([task.business, task.storeId, order.receiptNumber, false].join(','));
+            console.log(
+                [
+                    task.business,
+                    task.storeId,
+                    order.receiptNumber,
+                    false,
+                    order.transactionType,
+                ].join(','),
+            );
+            await testRealMiss(task.business, order.receiptNumber);
         }
 
         const onlineOrders = await OnlineTransaction.find({
@@ -226,27 +254,8 @@ async function checkMissedOrderForMonth(month) {
             .select({ receiptNumber: 1 })
             .lean();
         for (const order of onlineOrders) {
-            console.log([task.business, task.storeId, order.receiptNumber, true].join(','));
-        }
-    }
-}
-
-async function testTemp(month) {
-    const orders = await parseCsv('src/scripts/test/1.csv');
-    // group the orders by busiess and storeId
-    const groupedOrders = _.groupBy(orders, (order) => `${order.business},${order.storeId}`);
-    for (const key in groupedOrders) {
-        const [business, storeId] = key.split(',');
-        const returnOrders = await TransactionRecord.find({
-            business,
-            storeId,
-            receiptNumber: { $in: groupedOrders[key].map((order) => order.receiptNumber) },
-            transactionType: 'Return',
-        })
-            .select({ receiptNumber: 1, transactionType: 1 })
-            .lean();
-        for (const returnOrder of returnOrders) {
-            console.log([business, storeId, returnOrder.receiptNumber].join(','));
+            console.log([task.business, task.storeId, order.receiptNumber, true, ''].join(','));
+            await testRealMiss(task.business, order.receiptNumber);
         }
     }
 }
@@ -290,31 +299,6 @@ async function testLargeAggr(businessName) {
 
     console.log(count, result[0].productIds.length);
     console.log('end', new Date());
-}
-
-async function testRealMiss() {
-    const orders = await parseCsv('src/scripts/test/missedConsolidateOrders.csv');
-    // group the orders by busiess and storeId
-    const groupedOrders = _.groupBy(orders, (order) => `${order.business},${order.storeId}`);
-    for (const key in groupedOrders) {
-        const [business, storeId] = key.split(',');
-        const receiptNumbers = groupedOrders[key].map((order) => order.receiptNumber);
-        for (const receiptNumber in receiptNumbers) {
-            const eInvoice = await EInvoiceRequestRecord.default
-                .find({
-                    business,
-                    receiptNumbers: receiptNumber,
-                    'requestResult.eInvoiceStatus': {
-                        $in: [EInvoiceStatus.CANCEL, EInvoiceStatus.VALID],
-                    },
-                })
-                .lean()
-                .select({ _id: 1 });
-            if (eInvoice[0]) {
-                console.log(receiptNumber);
-            }
-        }
-    }
 }
 
 export async function run() {
