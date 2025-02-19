@@ -344,14 +344,24 @@ async function setClassificationCode() {
 async function fixEInvoiceRecordClassificationCode(doc) {
     const code = _.get(doc, 'rawRequestInfo.submissionInfo.classification');
     if (code) {
-        await EInvoiceRequestRecord.default.updateOne(
+        // const newDoc = await EInvoiceRequestRecord.default.findOneAndUpdate(
+        await EInvoiceRequestRecord.default.findOneAndUpdate(
             { _id: doc._id },
             {
                 $set: {
                     'addOnRequestInfo.orderInfo.items.$[].classificationCode': code,
                 },
             },
+            {
+                returnOriginal: false,
+            },
         );
+        // console.log(
+        //     '******************',
+        //     _.get(newDoc, 'addOnRequestInfo.orderInfo.items').map(
+        //         (item) => item.classificationCode,
+        //     ),
+        // );
     }
 }
 
