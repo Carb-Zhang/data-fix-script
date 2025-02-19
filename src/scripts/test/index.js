@@ -341,6 +341,36 @@ async function setClassificationCode() {
         .eachAsync(fixCode);
 }
 
+async function fixEInvoiceRecordClassificationCode(doc) {
+    const code = _.get(doc, 'rawRequestInfo.submissionInfo.classification');
+    if (code) {
+        await EInvoiceRequestRecord.default.updateOne(
+            { _id: doc._id },
+            {
+                $set: {
+                    'addOnRequestInfo.orderInfo.items.$[].classificationCode': code,
+                },
+            },
+        );
+    }
+}
+
+async function fixEInvoiceRecordClassificationCodes() {
+    await EInvoiceRequestRecord.default
+        .find({})
+        .sort({ _id: 1 })
+        .lean()
+        .cursor()
+        .addCursorFlag('noCursorTimeout', true)
+        .eachAsync(async (doc) => {
+            try {
+                await fixEInvoiceRecordClassificationCode(doc);
+            } catch (err) {
+                console.log(err);
+            }
+        });
+}
+
 export async function run() {
     // await checkMissedOrderForMonth('2025-01');
     // await checkFinishFix();
@@ -348,5 +378,6 @@ export async function run() {
     // await testLargeAggr('bigappledonuts');
     // await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
-    await setClassificationCode();
+    // await setClassificationCode();
+    await fixEInvoiceRecordClassificationCodes();
 }
