@@ -2,6 +2,7 @@ import Stocktake from '../../models/stockTake.js';
 import Product from '../../models/product.js';
 import EInvoiceRequestRecord from '../../models/eInvoiceRequestRecord.js';
 import EInvoiceConsolidationTask from '../../models/eInvoiceConsolidationTask.js';
+import BusinessModel from '../../models/business.js';
 import TransactionRecord from '../../models/transactionRecord.js';
 import OnlineTransaction from '../../models/onlineTransaction.js';
 import _ from 'lodash';
@@ -317,11 +318,35 @@ async function checkFinishFix() {
     console.log('total', count);
 }
 
+async function fixCode(doc) {
+    let neetFix = false;
+    doc.stores.forEach((store) => {
+        if (_.get(store, 'eInvoiceSetting.isEInvoiceReady')) {
+            neetFix = true;
+        }
+    });
+    if (!neetFix) {
+        return;
+    }
+    doc.defaultProductClassificationCode = '022';
+    await doc.save();
+}
+
+async function setClassificationCode() {
+    await BusinessModel.find({
+        isEInvoiceEnabled: true,
+    })
+        .cursor()
+        .addCursorFlag('noCursorTimeout', true)
+        .eachAsync(fixCode);
+}
+
 export async function run() {
     // await checkMissedOrderForMonth('2025-01');
-    await checkFinishFix();
+    // await checkFinishFix();
     // await testRealMiss();
     // await testLargeAggr('bigappledonuts');
     // await testLargeAggr('thesafehouse');
     // await testLargeAggr('onlytestaccount');
+    await setClassificationCode();
 }
